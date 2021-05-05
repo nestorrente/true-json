@@ -3,6 +3,3 @@ node_modules
 !/coverage/badge-**.svg
 .idea
 *.iml
-
-# Project exclude paths
-/dist/
