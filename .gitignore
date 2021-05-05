@@ -1,0 +1,8 @@
+node_modules
+/coverage/**
+!/coverage/badge-**.svg
+.idea
+*.iml
+
+# Project exclude paths
+/dist/
