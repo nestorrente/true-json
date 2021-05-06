@@ -1,4 +1,3 @@
-import {JsonValue} from '@/json/types';
 import JsonAdapter from '@/json/adapter/JsonAdapter';
 
 export default function getISODateAdapter(): JsonAdapter<Date, string> {

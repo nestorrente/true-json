@@ -6,6 +6,10 @@ interface TestObject {
 	roundScoreByPlayer: Map<Player, number[]>;
 	bestScoreByPlayerName: Map<string, number>;
 	aggregateFunction: AggregateFunction;
+	championshipStartDate: Date;
+	championshipEndDate: Date | null;
+	undefinedField: undefined;
+	active: boolean;
 }
 
 interface Player {
@@ -42,7 +46,11 @@ const testObject: TestObject = {
 		['Alice', 3],
 		['Bob', 3],
 	]),
-	aggregateFunction: StandardAggregateFunctions.AVG
+	championshipStartDate: new Date(0),
+	championshipEndDate: null,
+	aggregateFunction: StandardAggregateFunctions.AVG,
+	undefinedField: undefined,
+	active: true
 };
 
 const testObjectJson = `{
@@ -74,7 +82,10 @@ const testObjectJson = `{
         "Alice": 3,
         "Bob": 3
     },
-    "aggregateFunction": "AVG"
+    "championshipStartDate": 0,
+    "championshipEndDate": null,
+    "aggregateFunction": "AVG",
+    "active": "yes"
 }`;
 
 const converter = new JsonConverter(JsonAdapters.object<TestObject>({
@@ -84,7 +95,17 @@ const converter = new JsonConverter(JsonAdapters.object<TestObject>({
 		})
 	}),
 	bestScoreByPlayerName: JsonAdapters.mapAsRecord(),
-	aggregateFunction: JsonAdapters.byKey(StandardAggregateFunctions)
+	aggregateFunction: JsonAdapters.byKey(StandardAggregateFunctions),
+	championshipStartDate: JsonAdapters.dateTimestamp(),
+	championshipEndDate: JsonAdapters.nullishAware.dateTimestamp(),
+	active: JsonAdapters.custom<boolean, string>({
+		adaptToJson(value) {
+			return value ? 'yes' : 'no';
+		},
+		recoverFromJson(value) {
+			return value.startsWith('y');
+		}
+	})
 }));
 
 describe('Complex object', () => {
@@ -101,8 +122,14 @@ describe('Complex object', () => {
 
 		const result = converter.parse(testObjectJson);
 
-		expect(result).toStrictEqual(testObject);
+		expect(result).toStrictEqual(getTestObjectWithoutUndefinedField());
 
 	});
+
+	function getTestObjectWithoutUndefinedField(): Omit<TestObject, 'undefinedField'> {
+		const testObjectWithoutUndefinedField = {...testObject};
+		delete testObjectWithoutUndefinedField.undefinedField;
+		return testObjectWithoutUndefinedField;
+	}
 
 });

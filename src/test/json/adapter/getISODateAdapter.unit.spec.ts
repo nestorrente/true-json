@@ -1,5 +1,4 @@
 import getISODateAdapter from '@/json/adapter/getISODateAdapter';
-import {JsonValue} from '@/json/types';
 
 const isoDateAdapter = getISODateAdapter();
 

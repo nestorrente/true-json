@@ -1,6 +1,5 @@
 import getObjectAdapter from '@/json/adapter/getObjectAdapter';
-import getCustomTypeAdapter from '@/json/adapter/getCustomTypeAdapter';
-import getIdentityAdapter from '@/json/adapter/getIdentityAdapter';
+import addNullishAwareDecorator from '../../../main/json/adapter/addNullishAwareDecorator';
 import {JsonObject} from '@/json/types';
 
 describe('With default config', () => {
@@ -18,7 +17,7 @@ describe('With default config', () => {
 	}
 
 	const objectAdapter = getObjectAdapter<TestObject>({
-		date: getCustomTypeAdapter<number[], string>({
+		date: addNullishAwareDecorator<number[], string>({
 			adaptToJson(value) {
 				return value.map(e => String(e).padStart(2, '0')).join('-');
 			},
@@ -26,7 +25,7 @@ describe('With default config', () => {
 				return value.split('-').map(e => parseInt(e, 10));
 			}
 		}),
-		probability: getCustomTypeAdapter<number, string>({
+		probability: addNullishAwareDecorator<number, string>({
 			adaptToJson(value) {
 				return `${value * 100}%`;
 			},
@@ -84,7 +83,7 @@ describe('Ignoring unmapped properties', () => {
 	type SerializableTestObject = TestObject & JsonObject;
 
 	const objectAdapter = getObjectAdapter<TestObject>({
-		number: getCustomTypeAdapter<number, number>({
+		number: addNullishAwareDecorator<number, number>({
 			adaptToJson(value) {
 				return Math.pow(value, 2);
 			},

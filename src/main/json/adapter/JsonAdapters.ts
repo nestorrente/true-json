@@ -7,11 +7,14 @@ import getObjectAdapter from '@/json/adapter/getObjectAdapter';
 import getMapAsEntriesAdapter from '@/json/adapter/map/getMapAsEntriesAdapter';
 import getMapAsRecordAdapter from '@/json/adapter/map/getMapAsRecordAdapter';
 import getByKeyAdapter from '@/json/adapter/getByKeyAdapter';
-import getCustomTypeAdapter from '@/json/adapter/getCustomTypeAdapter';
+import getCustomAdapter from '@/json/adapter/getCustomAdapter';
+import getDateTimestampAdapter from '@/json/adapter/getDateTimestampAdapter';
+import createNullishAwareAdapterFactory from '@/json/adapter/createNullishAwareAdapterFactory';
 
 const JsonAdapters = {
 	identity: getIdentityAdapter,
 	isoDate: getISODateAdapter,
+	dateTimestamp: getDateTimestampAdapter,
 	array: getArrayJsonAdapter,
 	set: getSetAdapter,
 	record: getRecordAdapter,
@@ -19,7 +22,20 @@ const JsonAdapters = {
 	mapAsEntries: getMapAsEntriesAdapter,
 	mapAsRecord: getMapAsRecordAdapter,
 	byKey: getByKeyAdapter,
-	custom: getCustomTypeAdapter
+	custom: getCustomAdapter,
+	nullishAware: {
+		identity: createNullishAwareAdapterFactory(getIdentityAdapter),
+		isoDate: createNullishAwareAdapterFactory(getISODateAdapter),
+		dateTimestamp: createNullishAwareAdapterFactory(getDateTimestampAdapter),
+		array: createNullishAwareAdapterFactory(getArrayJsonAdapter),
+		set: createNullishAwareAdapterFactory(getSetAdapter),
+		record: createNullishAwareAdapterFactory(getRecordAdapter),
+		object: createNullishAwareAdapterFactory(getObjectAdapter),
+		mapAsEntries: createNullishAwareAdapterFactory(getMapAsEntriesAdapter),
+		mapAsRecord: createNullishAwareAdapterFactory(getMapAsRecordAdapter),
+		byKey: createNullishAwareAdapterFactory(getByKeyAdapter),
+		custom: createNullishAwareAdapterFactory(getCustomAdapter)
+	}
 };
 
 export default JsonAdapters;
