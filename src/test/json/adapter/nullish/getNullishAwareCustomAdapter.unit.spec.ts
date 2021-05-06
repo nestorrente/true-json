@@ -1,6 +1,6 @@
-import addNullishAwareDecorator, {Nullable} from '../../../main/json/adapter/addNullishAwareDecorator';
+import getNullishAwareCustomAdapter, {Nullable} from '../../../../main/json/adapter/nullish/getNullishAwareCustomAdapter';
 
-const isoDateAdapter = addNullishAwareDecorator<number, string>({
+const nullishAwareCustomAdapter = getNullishAwareCustomAdapter<number, string>({
 	adaptToJson(value) {
 		return value.toString();
 	},
@@ -21,7 +21,7 @@ testData.forEach(([value, jsonValue]) => {
 
 	test(`Adapt ${value} to JsonValue`, () => {
 
-		const result = isoDateAdapter.adaptToJson(value);
+		const result = nullishAwareCustomAdapter.adaptToJson(value);
 
 		expect(result).toBe(jsonValue);
 
@@ -29,7 +29,7 @@ testData.forEach(([value, jsonValue]) => {
 
 	test(`Adapt ${value} from JsonValue`, () => {
 
-		const result = isoDateAdapter.recoverFromJson(jsonValue);
+		const result = nullishAwareCustomAdapter.recoverFromJson(jsonValue);
 
 		expect(result).toEqual(value);
 

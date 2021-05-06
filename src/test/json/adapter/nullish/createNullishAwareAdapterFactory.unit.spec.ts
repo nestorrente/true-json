@@ -1,6 +1,6 @@
-import createNullishAwareAdapterFactory from '../../../main/json/adapter/createNullishAwareAdapterFactory';
-import JsonAdapter from '../../../main/json/adapter/JsonAdapter';
-import {Nullable} from '../../../main/json/adapter/addNullishAwareDecorator';
+import createNullishAwareAdapterFactory from '../../../../main/json/adapter/nullish/createNullishAwareAdapterFactory';
+import JsonAdapter from '../../../../main/json/adapter/JsonAdapter';
+import {Nullable} from '../../../../main/json/adapter/nullish/getNullishAwareCustomAdapter';
 
 const nullishAwareMultiplierAdapterFactory = createNullishAwareAdapterFactory((factor: number): JsonAdapter<number, number> => ({
 	adaptToJson(value) {

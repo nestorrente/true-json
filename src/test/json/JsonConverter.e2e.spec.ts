@@ -10,6 +10,7 @@ interface TestObject {
 	championshipEndDate: Date | null;
 	undefinedField: undefined;
 	active: boolean;
+	nullableBoolean: boolean | null;
 }
 
 interface Player {
@@ -50,7 +51,8 @@ const testObject: TestObject = {
 	championshipEndDate: null,
 	aggregateFunction: StandardAggregateFunctions.AVG,
 	undefinedField: undefined,
-	active: true
+	active: true,
+	nullableBoolean: null
 };
 
 const testObjectJson = `{
@@ -85,8 +87,18 @@ const testObjectJson = `{
     "championshipStartDate": 0,
     "championshipEndDate": null,
     "aggregateFunction": "AVG",
-    "active": "yes"
+    "active": "yes",
+    "nullableBoolean": null
 }`;
+
+const booleanToStringAdapter = JsonAdapters.custom<boolean, string>({
+	adaptToJson(value) {
+		return value ? 'yes' : 'no';
+	},
+	recoverFromJson(value) {
+		return value === 'yes';
+	}
+});
 
 const converter = new JsonConverter(JsonAdapters.object<TestObject>({
 	roundScoreByPlayer: JsonAdapters.mapAsEntries({
@@ -98,14 +110,8 @@ const converter = new JsonConverter(JsonAdapters.object<TestObject>({
 	aggregateFunction: JsonAdapters.byKey(StandardAggregateFunctions),
 	championshipStartDate: JsonAdapters.dateTimestamp(),
 	championshipEndDate: JsonAdapters.nullishAware.dateTimestamp(),
-	active: JsonAdapters.custom<boolean, string>({
-		adaptToJson(value) {
-			return value ? 'yes' : 'no';
-		},
-		recoverFromJson(value) {
-			return value.startsWith('y');
-		}
-	})
+	active: booleanToStringAdapter,
+	nullableBoolean: JsonAdapters.nullishAware.custom(booleanToStringAdapter)
 }));
 
 describe('Complex object', () => {

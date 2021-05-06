@@ -1,5 +1,4 @@
 import getObjectAdapter from '@/json/adapter/getObjectAdapter';
-import addNullishAwareDecorator from '../../../main/json/adapter/addNullishAwareDecorator';
 import {JsonObject} from '@/json/types';
 
 describe('With default config', () => {
@@ -17,22 +16,22 @@ describe('With default config', () => {
 	}
 
 	const objectAdapter = getObjectAdapter<TestObject>({
-		date: addNullishAwareDecorator<number[], string>({
-			adaptToJson(value) {
+		date: {
+			adaptToJson(value: number[]): string {
 				return value.map(e => String(e).padStart(2, '0')).join('-');
 			},
-			recoverFromJson(value) {
+			recoverFromJson(value: string): number[] {
 				return value.split('-').map(e => parseInt(e, 10));
 			}
-		}),
-		probability: addNullishAwareDecorator<number, string>({
-			adaptToJson(value) {
+		},
+		probability: {
+			adaptToJson(value: number): string {
 				return `${value * 100}%`;
 			},
-			recoverFromJson(value) {
+			recoverFromJson(value: string): number {
 				return parseFloat(value) / 100;
 			}
-		})
+		}
 	});
 
 	test(`Adapt Object to JsonObject`, () => {
@@ -83,14 +82,14 @@ describe('Ignoring unmapped properties', () => {
 	type SerializableTestObject = TestObject & JsonObject;
 
 	const objectAdapter = getObjectAdapter<TestObject>({
-		number: addNullishAwareDecorator<number, number>({
-			adaptToJson(value) {
+		number: {
+			adaptToJson(value: number): number {
 				return Math.pow(value, 2);
 			},
-			recoverFromJson(value) {
+			recoverFromJson(value: number): number {
 				return Math.sqrt(value);
 			}
-		})
+		}
 	}, {
 		ignoreUnmappedProperties: true
 	});

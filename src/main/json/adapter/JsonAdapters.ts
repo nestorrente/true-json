@@ -9,7 +9,8 @@ import getMapAsRecordAdapter from '@/json/adapter/map/getMapAsRecordAdapter';
 import getByKeyAdapter from '@/json/adapter/getByKeyAdapter';
 import getCustomAdapter from '@/json/adapter/getCustomAdapter';
 import getDateTimestampAdapter from '@/json/adapter/getDateTimestampAdapter';
-import createNullishAwareAdapterFactory from '@/json/adapter/createNullishAwareAdapterFactory';
+import createNullishAwareAdapterFactory from '@/json/adapter/nullish/createNullishAwareAdapterFactory';
+import getNullishAwareCustomAdapter from '@/json/adapter/nullish/getNullishAwareCustomAdapter';
 
 const JsonAdapters = {
 	identity: getIdentityAdapter,
@@ -34,7 +35,7 @@ const JsonAdapters = {
 		mapAsEntries: createNullishAwareAdapterFactory(getMapAsEntriesAdapter),
 		mapAsRecord: createNullishAwareAdapterFactory(getMapAsRecordAdapter),
 		byKey: createNullishAwareAdapterFactory(getByKeyAdapter),
-		custom: createNullishAwareAdapterFactory(getCustomAdapter)
+		custom: getNullishAwareCustomAdapter
 	}
 };
 
