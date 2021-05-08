@@ -16,8 +16,8 @@
 
 ## What's TrueJSON?
 
-TrueJSON is a library for serializing and deserializing complex types to JSON in JavaScript and TypeScript.
-It allows you to recover your dates, sets, maps, and other data types when deserializing JSON.
+TrueJSON is a library for serializing and deserializing complex types to JSON in JavaScript and TypeScript. It allows you to
+recover your dates, sets, maps, and other data types when deserializing JSON.
 
 ### What's wrong with `JSON.stringify()` and `JSON.parse()`?
 
@@ -38,8 +38,8 @@ If you see the value of the `jsonText` variable, you'll get the following JSON s
 
 ```json
 {
-    "date": "1970-01-01T00:00:00.000Z",
-    "set": {}
+	"date": "1970-01-01T00:00:00.000Z",
+	"set": {}
 }
 ```
 
@@ -48,14 +48,13 @@ As you can see, your set elements haven't been serialized as you would expect. M
 
 ![Deserialized object using native JSON (Google Chrome console)](docs/img/deserialized-object-native.png "Deserialized object using native JSON (Google Chrome console)")
 
-Now the `date` property is a `string`, and the `set` property is an empty object, which is not probably the wanted
-behavior.
+Now the `date` property is a `string`, and the `set` property is an empty object, which is not probably the wanted behavior.
 
 ### TrueJSON to the rescue
 
-Using TrueJSON, you can create a `JsonConverter` that knows how to serialize and deserialize your object without loosing
-any information. This can be done by using _JSON adapters_, which are components that know how to adapt some data types
-to _jsonable_ values. Let's see an example:
+Using TrueJSON, you can create a `JsonConverter` that knows how to serialize and deserialize your object without loosing any
+information. This can be done by using _JSON adapters_, which are components that know how to adapt some data types to _
+jsonable_ values. Let's see an example:
 
 ```javascript
 import {JsonConverter, JsonAdapters} from '@nestorrente/true-json';
@@ -80,8 +79,12 @@ If you see the value of the `jsonText` variable, now you'll get the following JS
 
 ```json
 {
-    "date": "1970-01-01T00:00:00.000Z",
-    "set": [1, 2, 3]
+	"date": "1970-01-01T00:00:00.000Z",
+	"set": [
+		1,
+		2,
+		3
+	]
 }
 ```
 
@@ -90,8 +93,7 @@ you see the value of the `deserializedObject` variable, you'll see the following
 
 ![Deserialized object using TrueJSON (Google Chrome console)](docs/img/deserialized-object-truejson.png "Deserialized object using TrueJSON (Google Chrome console)")
 
-As you can see, both the `date` property and the `set` property have been deserialized to `Date` and `Set` objects
-respectively.
+As you can see, both the `date` property and the `set` property have been deserialized to `Date` and `Set` objects respectively.
 
 ## Built-in adapters
 
@@ -332,7 +334,75 @@ Output:
 
 ### byKey(keyValuePairs\[, fallbackKey])
 
-TODO
+```javascript
+const ScalingStrategies = {
+    DEFAULT: new DefaultScalingStrategy(),
+    FAST: new FastScalingStrategy(),
+    SMOOTH: new SmoothScalingStrategy()
+};
+
+const adapter = JsonAdapters.byKey(ScalingStrategies);
+
+console.log(adapter.adaptToJson(ScalingStrategies.FAST));
+
+console.log(adapter.recoverFromJson('SMOOTH'));
+```
+
+Output:
+
+```text
+"FAST"
+
+function SmoothScalingStrategy() { /* ... */ }
+```
+
+If an unknown value is passed to the methods, `undefined` is returned:
+
+```javascript
+const ScalingStrategies = {
+    DEFAULT: new DefaultScalingStrategy(),
+    FAST: new FastScalingStrategy(),
+    SMOOTH: new SmoothScalingStrategy()
+};
+
+const adapter = JsonAdapters.byKey(ScalingStrategies);
+
+console.log(adapter.adaptToJson(new UnknownScalingStrategy()));
+
+console.log(adapter.recoverFromJson('UNKNOWN'));
+```
+
+Output:
+
+```text
+undefined
+
+undefined
+```
+
+You can also specify a fallback key to use in those cases:
+
+```javascript
+const ScalingStrategies = {
+    DEFAULT: new DefaultScalingStrategy(),
+    FAST: new FastScalingStrategy(),
+    SMOOTH: new SmoothScalingStrategy()
+};
+
+const adapter = JsonAdapters.byKey(ScalingStrategies, 'DEFAULT');
+
+console.log(adapter.adaptToJson(new UnknownScalingStrategy()));
+
+console.log(adapter.recoverFromJson('UNKNOWN'));
+```
+
+Output:
+
+```text
+"DEFAULT"
+
+function DefaultScalingStrategy() { /* ... */ }
+```
 
 ## Writing your own adapter
 
