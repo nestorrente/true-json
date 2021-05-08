@@ -120,7 +120,7 @@ const adapter = JsonAdapters.isoDate();
 
 console.log(adapter.adaptToJson(new Date(0)));
 
-console.log(adapter.recoverFromJson("1970-01-01T00:00:00.000Z"));
+console.log(adapter.recoverFromJson('1970-01-01T00:00:00.000Z'));
 ```
 
 Output:
@@ -174,7 +174,7 @@ Output:
 ]
 ```
 
-### set([elementAdapter])
+### set(\[elementAdapter])
 
 ```javascript
 const adapter = JsonAdapters.set(JsonAdapters.dateTimestamp());
@@ -195,7 +195,7 @@ Set {
 }
 ```
 
-TODO write that if you don't pass any elementAdapter, `identity()` will be used.
+TODO comment that if you don't pass any elementAdapter, `identity()` will be used.
 
 ### record(valueAdapter)
 
@@ -228,9 +228,107 @@ Set {
 
 ### mapAsEntries
 
-### mapAsRecord
+```javascript
+const adapter = JsonAdapters.mapAsEntries({
+    keyAdapter: JsonAdapters.dateTimestamp(),
+    valueAdapter: JsonAdapters.set(),
+});
 
-### object
+console.log(adapter.adaptToJson(new Map([
+    [new Date(0), new Set([1, 2, 3])],
+    [new Date(1620458583563), new Set([4, 5, 6])]
+])));
+
+console.log(adapter.recoverFromJson([
+    [0, [1, 2, 3]],
+    [1620458583563, [4, 5, 6]]
+]));
+```
+
+Output:
+
+```text
+[
+    [0, [1, 2, 3]],
+    [1620458583563, [4, 5, 6]]
+]
+
+Map {
+    Date { Thu Jan 01 1970 00:00:00 GMT+0000 (Coordinated Universal Time) } => Set { 1, 2, 3 },
+    Date { Sat May 08 2021 07:23:03 GMT+0000 (Coordinated Universal Time) } => Set { 4, 5, 6 }
+}
+```
+
+TODO comment that if you don't pass any keyAdapter or valueAdapter, `identity()` will be used.
+
+### mapAsRecord(\[config])
+
+```javascript
+const adapter = JsonAdapters.mapAsRecord({
+    keyAdapter: JsonAdapters.isoDate(),
+    valueAdapter: JsonAdapters.set(),
+});
+
+console.log(adapter.adaptToJson(new Map([
+    [new Date(0), new Set([1, 2, 3])],
+    [new Date(1620458583563), new Set([4, 5, 6])]
+])));
+
+console.log(adapter.recoverFromJson({
+    "1970-01-01T00:00:00.000Z": [1, 2, 3],
+    "2021-05-08T07:23:03.563Z": [4, 5, 6]
+}));
+```
+
+Output:
+
+```text
+{
+    "1970-01-01T00:00:00.000Z": [1, 2, 3],
+    "2021-05-08T07:23:03.563Z": [4, 5, 6]
+}
+
+Map {
+    Date { Thu Jan 01 1970 00:00:00 GMT+0000 (Coordinated Universal Time) } => Set { 1, 2, 3 },
+    Date { Sat May 08 2021 07:23:03 GMT+0000 (Coordinated Universal Time) } => Set { 4, 5, 6 }
+}
+```
+
+TODO comment that if you don't pass any keyAdapter or valueAdapter, `identity()` will be used.
+
+### object(propertyAdapters\[, config])
+
+TODO comment that `identity()` adapter will be use for all unmapped properties.
+
+```javascript
+const adapter = JsonAdapters.object({
+    releaseDate: JsonAdapters.isoDate()
+});
+
+console.log(adapter.adaptToJson({
+    name: 'Harry Potter and the Deathly Hallows - Part 2',
+    releaseDate: new Date('2011-07-15')
+}));
+
+console.log(adapter.recoverFromJson({
+    name: 'Harry Potter and the Deathly Hallows - Part 2',
+    releaseDate: '2011-07-15T00:00:00.000Z'
+}));
+```
+
+Output:
+
+```text
+{
+    "name": "Harry Potter and the Deathly Hallows - Part 2",
+    "releaseDate": "2011-07-15T00:00:00.000Z"
+}
+
+{
+    "name": "Harry Potter and the Deathly Hallows - Part 2",
+    "releaseDate": Date { Fri Jul 15 2011 00:00:00 GMT+0000 (Coordinated Universal Time) }
+}
+```
 
 ### byKey
 
