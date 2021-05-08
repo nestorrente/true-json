@@ -109,9 +109,9 @@ const converter = new JsonConverter(JsonAdapters.object<TestObject>({
 	bestScoreByPlayerName: JsonAdapters.mapAsRecord(),
 	aggregateFunction: JsonAdapters.byKey(StandardAggregateFunctions),
 	championshipStartDate: JsonAdapters.dateTimestamp(),
-	championshipEndDate: JsonAdapters.nullishAware.dateTimestamp(),
+	championshipEndDate: JsonAdapters.dateTimestamp(),
 	active: booleanToStringAdapter,
-	nullableBoolean: JsonAdapters.nullishAware.custom(booleanToStringAdapter)
+	nullableBoolean: JsonAdapters.nullishAwareCustom(booleanToStringAdapter)
 }));
 
 describe('Complex object', () => {

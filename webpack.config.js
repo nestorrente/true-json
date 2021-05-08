@@ -62,7 +62,9 @@ const moduleConfig = {
     output: {
         ...commonConfig.output,
         filename: 'true-json.esm.js',
-        libraryTarget: 'umd',
+        library: {
+            type: 'umd'
+        },
         globalObject: 'typeof self !== \'undefined\' ? self : this'
     }
 };

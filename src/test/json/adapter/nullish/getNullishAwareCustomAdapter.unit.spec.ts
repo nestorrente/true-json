@@ -1,4 +1,4 @@
-import getNullishAwareCustomAdapter, {Nullable} from '../../../../main/json/adapter/nullish/getNullishAwareCustomAdapter';
+import getNullishAwareCustomAdapter, {Nullable} from '@/json/adapter/nullish/getNullishAwareCustomAdapter';
 
 const nullishAwareCustomAdapter = getNullishAwareCustomAdapter<number, string>({
 	adaptToJson(value) {

@@ -89,10 +89,63 @@ describe('Unknown values with default value', () => {
 
 		const input = undefined;
 
-		// @ts-expect-error
 		const result = knownAnimalsByKeyAdapter.recoverFromJson(input);
 
 		expect(result).toBe(KnownAnimals.BIRD);
+
+	});
+
+	test(`Adapt null key to value`, () => {
+
+		const input = null;
+
+		const result = knownAnimalsByKeyAdapter.recoverFromJson(input);
+
+		expect(result).toBe(KnownAnimals.BIRD);
+
+	});
+
+});
+
+describe('Admit undefined and null as valid values', () => {
+
+	type NullableBoolean = boolean | null | undefined;
+
+	type NullableBooleanKey = 'TRUE' | 'FALSE' | 'NULL' | 'UNDEFINED';
+
+	const NullableBooleans: Record<NullableBooleanKey, NullableBoolean> = {
+		TRUE: true,
+		FALSE: false,
+		NULL: null,
+		UNDEFINED: undefined
+	};
+
+	const nullableBooleanByKeyAdapter = getByKeyAdapter(NullableBooleans);
+
+	const testData: [NullableBooleanKey, NullableBoolean][] = [
+		['TRUE', true],
+		['FALSE', false],
+		['NULL', null],
+		['UNDEFINED', undefined],
+	];
+
+	testData.forEach(([key, value]) => {
+
+		test(`Adapt value to its key`, () => {
+
+			const result = nullableBooleanByKeyAdapter.adaptToJson(value);
+
+			expect(result).toBe(key);
+
+		});
+
+		test(`Adapt undefined key to value`, () => {
+
+			const result = nullableBooleanByKeyAdapter.recoverFromJson(key);
+
+			expect(result).toBe(value);
+
+		});
 
 	});
 

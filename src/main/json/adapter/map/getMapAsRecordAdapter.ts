@@ -1,25 +1,24 @@
-import {JsonArray, JsonObject, JsonValue} from '@/json/types';
-import JsonAdapter from '@/json/adapter/JsonAdapter';
-import getArrayJsonAdapter from '@/json/adapter/getArrayJsonAdapter';
-import getIdentityAdapter from '@/json/adapter/getIdentityAdapter';
-import {MapAdapterConfig, MapEntry} from '@/json/adapter/map/types';
+import {JsonObject, JsonValue} from '@/json/types';
+import {MapAdapterConfig} from '@/json/adapter/map/types';
 import getMapAsEntriesAdapter from '@/json/adapter/map/getMapAsEntriesAdapter';
+import getNullishAwareCustomAdapter, {Nullable} from '@/json/adapter/nullish/getNullishAwareCustomAdapter';
+import JsonAdapter from '@/json/adapter/JsonAdapter';
 
 export default function getMapAsRecordAdapter<K, V, JV extends JsonValue = JsonValue>(
 		config?: Partial<MapAdapterConfig<K, V, string, JV>>
-): JsonAdapter<Map<K, V>, JsonObject<JV>> {
+): JsonAdapter<Nullable<Map<K, V>>, Nullable<JsonObject<JV>>> {
 
 	const mapAsEntriesAdapter = getMapAsEntriesAdapter(config);
 
-	return {
+	return getNullishAwareCustomAdapter({
 		adaptToJson(map) {
-			const adaptedEntries = mapAsEntriesAdapter.adaptToJson(map);
+			const adaptedEntries = mapAsEntriesAdapter.adaptToJson(map)!;
 			return Object.fromEntries(adaptedEntries);
 		},
 		recoverFromJson(jsonObject) {
 			const entries = Object.entries(jsonObject);
-			return mapAsEntriesAdapter.recoverFromJson(entries);
+			return mapAsEntriesAdapter.recoverFromJson(entries)!;
 		}
-	};
+	});
 
 }

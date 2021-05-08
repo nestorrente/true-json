@@ -1,5 +1,6 @@
 import {JsonObject, JsonValue} from '@/json/types';
 import JsonAdapter from '@/json/adapter/JsonAdapter';
+import getNullishAwareCustomAdapter, {Nullable} from '@/json/adapter/nullish/getNullishAwareCustomAdapter';
 
 export type MappedProperties<T, P> = Partial<Record<keyof T, P>>;
 export type PropertyAdapters<T, P = JsonValue> = MappedProperties<T, JsonAdapter<any, P>>
@@ -12,11 +13,11 @@ export interface ObjectAdapterConfig<T, U> {
 export default function getObjectAdapter<T, U extends JsonValue = JsonValue>(
 		propertyAdapters: PropertyAdapters<T, U>,
 		config?: Partial<ObjectAdapterConfig<T, U>>
-): JsonAdapter<T, JsonObject<U>> {
+): JsonAdapter<Nullable<T>, Nullable<JsonObject<U>>> {
 
 	const fullConfig = getFullConfig(config);
 
-	return {
+	return getNullishAwareCustomAdapter({
 		adaptToJson(object) {
 
 			const mappedEntries = getObjectEntries(object, propertyAdapters, fullConfig)
@@ -39,7 +40,7 @@ export default function getObjectAdapter<T, U extends JsonValue = JsonValue>(
 			return Object.fromEntries(mappedEntries);
 
 		}
-	};
+	});
 }
 
 function getFullConfig<T, U extends JsonValue>(partialConfig?: Partial<ObjectAdapterConfig<T, U>>): ObjectAdapterConfig<T, U> {

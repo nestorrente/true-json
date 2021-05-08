@@ -3,10 +3,11 @@ import JsonAdapter from '@/json/adapter/JsonAdapter';
 import getArrayJsonAdapter from '@/json/adapter/getArrayJsonAdapter';
 import getIdentityAdapter from '@/json/adapter/getIdentityAdapter';
 import {MapAdapterConfig, MapEntry} from '@/json/adapter/map/types';
+import getNullishAwareCustomAdapter, {Nullable} from '@/json/adapter/nullish/getNullishAwareCustomAdapter';
 
 export default function getMapAsEntriesAdapter<K, V, JK extends JsonValue = JsonValue, JV extends JsonValue = JsonValue>(
 		config?: Partial<MapAdapterConfig<K, V, JK, JV>>
-): JsonAdapter<Map<K, V>, JsonArray<MapEntry<JK, JV>>> {
+): JsonAdapter<Nullable<Map<K, V>>, Nullable<JsonArray<MapEntry<JK, JV>>>> {
 
 	const keyAdapter: JsonAdapter<K, JK> = config?.keyAdapter ?? getIdentityAdapter<any>();
 	const valueAdapter: JsonAdapter<V, JV> = config?.valueAdapter ?? getIdentityAdapter<any>();
@@ -34,13 +35,13 @@ export default function getMapAsEntriesAdapter<K, V, JK extends JsonValue = Json
 		}
 	});
 
-	return {
+	return getNullishAwareCustomAdapter({
 		adaptToJson(map) {
-			return entryAdapter.adaptToJson([...map]);
+			return entryAdapter.adaptToJson([...map])!;
 		},
 		recoverFromJson(jsonArray) {
 			return new Map(entryAdapter.recoverFromJson(jsonArray));
 		}
-	};
+	});
 
 }
