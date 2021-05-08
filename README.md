@@ -330,7 +330,9 @@ Output:
 }
 ```
 
-### byKey
+### byKey(keyValuePairs\[, fallbackKey])
+
+TODO
 
 ## Writing your own adapter
 
