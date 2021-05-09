@@ -97,7 +97,11 @@ As you can see, both the `date` property and the `set` property have been deseri
 
 ## Built-in adapters
 
+In this section, we will cover the build-in adapters that TrueJSON provides to you.
+
 ### identity()
+
+The identity adapter takes its name from the _identity function_ concept. It just returns the same value it receives:
 
 ```javascript
 const adapter = JsonAdapters.identity();
@@ -115,7 +119,13 @@ Output:
 3
 ```
 
+You won't normally need to use this adapter, but it could be useful if you want to write your own.
+
 ### isoDate()
+
+This adapter converts any `Date` object into his ISO textual representation (see
+[`Date.prototype.toISOString()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString)
+docs) and vice versa:
 
 ```javascript
 const adapter = JsonAdapters.isoDate();
@@ -135,6 +145,10 @@ Date { Thu Jan 01 1970 00:00:00 GMT+0000 (Coordinated Universal Time) }
 
 ### dateTimestamp()
 
+This adapter converts any `Date` object into his number representation in milliseconds (see
+[`Date.prototype.getTime()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getTime)
+docs) and vice versa:
+
 ```javascript
 const adapter = JsonAdapters.dateTimestamp();
 
@@ -150,6 +164,8 @@ Date { Thu Jan 01 1970 00:00:00 GMT+0000 (Coordinated Universal Time) }
 ```
 
 ### array(elementAdapter)
+
+Using this adapter you can specify how the elements of the array should be adapted:
 
 ```javascript
 const adapter = JsonAdapters.array(JsonAdapters.dateTimestamp());
@@ -178,10 +194,31 @@ Output:
 
 ### set(\[elementAdapter])
 
+By default, JavaScript sets are serialized as an empty object. Using this adapter allows you to serialize them in the
+same way that arrays are serialized:
+
+```javascript
+const adapter = JsonAdapters.set();
+
+console.log(adapter.adaptToJson(new Set([1, 2, 3])));
+
+console.log(adapter.recoverFromJson([1, 2, 3]));
+```
+
+Output:
+
+```text
+[1, 2, 3]
+
+Set { 1, 2, 3 }
+```
+
+You can also specify an adapter to be used for mapping the elements of the set:
+
 ```javascript
 const adapter = JsonAdapters.set(JsonAdapters.dateTimestamp());
 
-console.log(adapter.adaptToJson([new Date(0), new Date(1620458583563)]));
+console.log(adapter.adaptToJson(new Set([new Date(0), new Date(1620458583563)])));
 
 console.log(adapter.recoverFromJson([0, 1620458583563]));
 ```
@@ -197,11 +234,18 @@ Set {
 }
 ```
 
-TODO comment that if you don't pass any elementAdapter, `identity()` will be used.
+Notice that calling `JsonAdapters.set()` without any element adapter is equivalent to calling
+`JsonAdapters.set(JsonAdapters.identity())`.
 
 ### record(valueAdapter)
 
-TODO write about what a Record is (for non-TS users).
+A record is a JavaScript plain object consisting of key-value pairs. In that sense, it's a similar to a `Map` (a.k.a.
+_hashtable_ or _dictionary_ in other programming languages), but its keys are always strings*.
+
+&ast; JavaScript also allows to use the `symbol` type as a key, but TrueJSON expects records to be in the form
+`{ string: any }` (for TypeScript users: `Record<string, any>`).
+
+The record adapter receives an adapter that will be applied to each of the record values, just as the array adapter does:
 
 ```javascript
 const adapter = JsonAdapters.record(JsonAdapters.dateTimestamp());
@@ -229,6 +273,8 @@ Set {
 ```
 
 ### mapAsEntries
+
+TODO pending.
 
 ```javascript
 const adapter = JsonAdapters.mapAsEntries({
@@ -265,6 +311,8 @@ TODO comment that if you don't pass any keyAdapter or valueAdapter, `identity()`
 
 ### mapAsRecord(\[config])
 
+TODO pending.
+
 ```javascript
 const adapter = JsonAdapters.mapAsRecord({
     keyAdapter: JsonAdapters.isoDate(),
@@ -300,7 +348,7 @@ TODO comment that if you don't pass any keyAdapter or valueAdapter, `identity()`
 
 ### object(propertyAdapters\[, config])
 
-TODO comment that `identity()` adapter will be use for all unmapped properties.
+TODO pending.
 
 ```javascript
 const adapter = JsonAdapters.object({
@@ -332,7 +380,11 @@ Output:
 }
 ```
 
+TODO comment that `identity()` adapter will be use for all unmapped properties.
+
 ### byKey(keyValuePairs\[, fallbackKey])
+
+TODO pending.
 
 ```javascript
 const ScalingStrategies = {
@@ -356,7 +408,7 @@ Output:
 function SmoothScalingStrategy() { /* ... */ }
 ```
 
-If an unknown value is passed to the methods, `undefined` is returned:
+If an unknown value is passed to any of the methods, `undefined` is returned:
 
 ```javascript
 const ScalingStrategies = {
