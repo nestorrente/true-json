@@ -12,7 +12,30 @@
 ![Coverage functions](coverage/badge-functions.svg)
 ![Coverage lines](coverage/badge-lines.svg)
 
-[comment]: <> (## Table of contents)
+## Table of contents
+
+* [What's TrueJSON?](#whats-truejson)
+    + [What's wrong with `JSON.stringify()` and `JSON.parse()`?](#whats-wrong-with-jsonstringify-and-jsonparse)
+    + [TrueJSON to the rescue](#truejson-to-the-rescue)
+* [Installation](#installation)
+    + [Using NPM](#using-npm)
+    + [Using `<script>` tag](#using-script-tag)
+* [Usage](#usage)
+    + [Using `import`](#using-import)
+    + [Using `TrueJSON` object](#using-truejson-object)
+* [Built-in adapters](#built-in-adapters)
+    + [identity()](#identity)
+    + [isoDate()](#isodate)
+    + [dateTimestamp()](#datetimestamp)
+    + [array(elementAdapter)](#arrayelementadapter)
+    + [set([elementAdapter])](#setelementadapter)
+    + [record(valueAdapter)](#recordvalueadapter)
+    + [mapAsEntries](#mapasentries)
+    + [mapAsRecord([config])](#mapasrecordconfig)
+    + [object(propertyAdapters[, config])](#objectpropertyadapters-config)
+    + [byKey(keyValuePairs[, fallbackKey])](#bykeykeyvaluepairs-fallbackkey)
+* [Writing your own adapter](#writing-your-own-adapter)
+* [Contributing](#contributing)
 
 ## What's TrueJSON?
 
@@ -94,6 +117,91 @@ you see the value of the `deserializedObject` variable, you'll see the following
 ![Deserialized object using TrueJSON (Google Chrome console)](docs/img/deserialized-object-truejson.png "Deserialized object using TrueJSON (Google Chrome console)")
 
 As you can see, both the `date` property and the `set` property have been deserialized to `Date` and `Set` objects respectively.
+
+## Installation
+
+### Using NPM
+
+Install the latest stable version:
+
+```bash
+npm install --save @nestorrente/true-json
+```
+
+Then you can import TrueJSON objects in your modules:
+
+```javascript
+import {JsonConverter, JsonAdapters} from '@nestorrente/true-json';
+```
+
+### Using `<script>` tag
+
+You can [download the latest version from here](dist/true-json.js). Then, you can use it as any other JavaScript file:
+
+```html
+<script src="true-json.js"></script>
+```
+
+Or, if you prefer, you can use any of the following CDN repositories:
+
+```html
+<!-- Unpkg -->
+<script src="https://unpkg.com/@nestorrente/true-json@1.0.0-alpha.0"></script>
+
+<!-- JsDelivr -->
+<script src="https://cdn.jsdelivr.net/npm/@nestorrente/true-json@1.0.0-alpha.0"></script>
+```
+
+The script will create a global `TrueJSON` object, which contains all the exported objects.
+
+## Usage
+
+### Using `import`
+
+```javascript
+import {JsonConverter, JsonAdapters} from '@nestorrente/true-json';
+
+const user = {
+    name: 'John Doe',
+    birthDate: new Date('1970-01-01'),
+    bestScoreByGame: new Map([
+        ['Minesweeper', 118],
+        ['Donkey Kong', 35500],
+        ['Super Mario Bros.', 183250],
+    ])
+};
+
+const userJsonConverter = new JsonConverter(JsonAdapters.object({
+    birthDate: JsonAdapters.isoDate(),
+    bestScoreByGame: JsonAdapters.mapAsRecord()
+}));
+
+const userAsJson = userJsonConverter.stringify(user);
+
+console.log(userAsJson);
+```
+
+### Using `TrueJSON` object
+
+You can access any object just by doing `TrueJSON.[object name]`:
+
+```javascript
+const userJsonConverter = new TrueJSON.JsonConverter(TrueJSON.JsonAdapters.object({
+    birthDate: TrueJSON.JsonAdapters.isoDate(),
+    bestScoreByGame: TrueJSON.JsonAdapters.mapAsRecord()
+}));
+```
+
+You can also use ES6 _destructuring assignment_ in order to imitate module imports:
+
+```javascript
+const {JsonConverter, JsonAdapters} = TrueJSON;
+
+const userJsonConverter = new JsonConverter(JsonAdapters.object({
+    birthDate: JsonAdapters.isoDate(),
+    bestScoreByGame: JsonAdapters.mapAsRecord()
+}));
+```
 
 ## Built-in adapters
 
