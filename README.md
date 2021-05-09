@@ -459,3 +459,16 @@ function DefaultScalingStrategy() { /* ... */ }
 ## Writing your own adapter
 
 TODO write about `custom()` and `nullishAwareCustom()`.
+
+## Contributing
+
+This is a library developed by one single person, any bug report, suggestion, pull request, or any other kind of
+feedback will be really appreciated.
+
+Please contribute using [GitHub Flow](https://guides.github.com/introduction/flow). Create a branch from the `develop`
+one, add commits, and [open a pull request](https://github.com/nestorrente/true-json/compare).
+
+Please note we have a [code of conduct](CODE_OF_CONDUCT.md), please follow it in all your interactions with the project.
+
+If you want to get in touch with the author, you can contact me through
+[LinkedIn](https://www.linkedin.com/in/nestorpglez/) or [email](mailto:nestorpglez@gmail.com).
