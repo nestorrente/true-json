@@ -146,10 +146,10 @@ Or, if you prefer, you can use any of the following CDN repositories:
 
 ```html
 <!-- Unpkg -->
-<script src="https://unpkg.com/true-json@1.0.0-alpha.1"></script>
+<script src="https://unpkg.com/true-json@1.0.0-alpha.2"></script>
 
 <!-- JsDelivr -->
-<script src="https://cdn.jsdelivr.net/npm/true-json@1.0.0-alpha.1"></script>
+<script src="https://cdn.jsdelivr.net/npm/true-json@1.0.0-alpha.2"></script>
 ```
 
 The script will create a global `TrueJSON` object, which contains all the exported objects.
