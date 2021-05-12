@@ -1,10 +1,8 @@
 import {JsonValue} from '@/json/types';
 import JsonAdapter from '@/json/adapter/JsonAdapter';
+import {NullishAwareJsonAdapter, NullishValue} from '@/json/adapter/types';
 
-type NullishValue = null | undefined;
-export type Nullable<T> = T | NullishValue;
-
-export default function getNullishAwareCustomAdapter<T, U extends JsonValue = JsonValue>(adapter: JsonAdapter<T, U>): JsonAdapter<Nullable<T>, Nullable<U>> {
+export default function getNullishAwareCustomAdapter<T, U extends JsonValue = JsonValue>(adapter: JsonAdapter<T, U>): NullishAwareJsonAdapter<T, U> {
 	return {
 		adaptToJson(value) {
 			if (value == null) {

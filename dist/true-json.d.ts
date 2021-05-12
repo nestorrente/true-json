@@ -6,7 +6,7 @@ export declare type JsonArray<T extends JsonValue> = T[];
 export declare type JsonObject<T extends JsonValue = JsonValue> = {
 	[key: string]: T;
 };
-export interface JsonAdapter<T, U extends JsonValue> {
+export interface JsonAdapter<T, U extends JsonValue = JsonValue> {
 	adaptToJson(value: T): U;
 	recoverFromJson(value: U): T;
 }
@@ -16,16 +16,20 @@ export declare class JsonConverter<T> {
 	stringify(value: T, space?: string | number): string;
 	parse(text: string): T;
 }
+export declare type StringKeyOf<T> = string & keyof T;
 export declare type NullishValue = null | undefined;
 export declare type Nullable<T> = T | NullishValue;
-declare function getNullishAwareCustomAdapter<T, U extends JsonValue = JsonValue>(adapter: JsonAdapter<T, U>): JsonAdapter<Nullable<T>, Nullable<U>>;
-declare function getIdentityAdapter<T extends JsonValue = JsonValue>(): JsonAdapter<Nullable<T>, Nullable<T>>;
-declare function getISODateAdapter(): JsonAdapter<Nullable<Date>, Nullable<string>>;
-declare function getDateTimestampAdapter(): JsonAdapter<Nullable<Date>, Nullable<number>>;
-declare function getArrayJsonAdapter<T, U extends JsonValue = JsonValue>(elementAdapter: JsonAdapter<T, U>): JsonAdapter<Nullable<T[]>, Nullable<JsonArray<U>>>;
-declare function getSetAdapter<T extends JsonValue = JsonValue>(): JsonAdapter<Nullable<Set<T>>, Nullable<JsonArray<T>>>;
-declare function getSetAdapter<T, U extends JsonValue = JsonValue>(elementAdapter: JsonAdapter<T, U>): JsonAdapter<Nullable<Set<T>>, Nullable<JsonArray<U>>>;
-declare function getRecordAdapter<T, U extends JsonValue = JsonValue>(valueAdapter: JsonAdapter<T, U>): JsonAdapter<Nullable<Record<string, T>>, Nullable<JsonObject<U>>>;
+export declare type NullishAwareJsonAdapter<T, U extends JsonValue = JsonValue> = JsonAdapter<Nullable<T>, Nullable<U>>;
+export declare type RecursiveNullable<T> = Nullable<{
+	[P in keyof T]: Nullable<T[P] extends (infer U)[] ? RecursiveNullable<U>[] : T[P] extends object ? RecursiveNullable<T[P]> : T[P]>;
+}>;
+declare function getIdentityAdapter<T extends JsonValue = JsonValue>(): NullishAwareJsonAdapter<T, T>;
+declare function getISODateAdapter(): NullishAwareJsonAdapter<Date, string>;
+declare function getDateTimestampAdapter(): NullishAwareJsonAdapter<Date, number>;
+declare function getArrayJsonAdapter<T, U extends JsonValue = JsonValue>(elementAdapter: JsonAdapter<T, U>): NullishAwareJsonAdapter<T[], JsonArray<U>>;
+declare function getSetAdapter<T extends JsonValue = JsonValue>(): NullishAwareJsonAdapter<Set<T>, JsonArray<T>>;
+declare function getSetAdapter<T, U extends JsonValue = JsonValue>(elementAdapter: JsonAdapter<T, U>): NullishAwareJsonAdapter<Set<T>, JsonArray<U>>;
+declare function getRecordAdapter<T, U extends JsonValue = JsonValue>(valueAdapter: JsonAdapter<T, U>): NullishAwareJsonAdapter<Record<string, T>, JsonObject<U>>;
 export declare type MapEntry<K, V> = [
 	K,
 	V
@@ -34,12 +38,8 @@ export interface MapAdapterConfig<K, V, JK extends JsonValue = JsonValue, JV ext
 	keyAdapter: JsonAdapter<K, JK>;
 	valueAdapter: JsonAdapter<V, JV>;
 }
-declare function getMapAsEntriesAdapter<K, V, JK extends JsonValue = JsonValue, JV extends JsonValue = JsonValue>(config?: Partial<MapAdapterConfig<K, V, JK, JV>>): JsonAdapter<Nullable<Map<K, V>>, Nullable<JsonArray<MapEntry<JK, JV>>>>;
-declare function getMapAsRecordAdapter<K, V, JV extends JsonValue = JsonValue>(config?: Partial<MapAdapterConfig<K, V, string, JV>>): JsonAdapter<Nullable<Map<K, V>>, Nullable<JsonObject<JV>>>;
-export declare type StringKeyOf<T> = string & keyof T;
-export declare type RecursiveNullable<T> = Nullable<{
-	[P in keyof T]: Nullable<T[P] extends (infer U)[] ? RecursiveNullable<U>[] : T[P] extends object ? RecursiveNullable<T[P]> : T[P]>;
-}>;
+declare function getMapAsEntriesAdapter<K, V, JK extends JsonValue = JsonValue, JV extends JsonValue = JsonValue>(config?: Partial<MapAdapterConfig<K, V, JK, JV>>): NullishAwareJsonAdapter<Map<K, V>, JsonArray<MapEntry<JK, JV>>>;
+declare function getMapAsRecordAdapter<K, V, JV extends JsonValue = JsonValue>(config?: Partial<MapAdapterConfig<K, V, string, JV>>): NullishAwareJsonAdapter<Map<K, V>, JsonObject<JV>>;
 export declare type PropertyAdapters<T> = {
 	[K in keyof T]?: JsonAdapter<RecursiveNullable<T[K]>, any>;
 };
@@ -47,9 +47,10 @@ export interface ObjectAdapterConfig<T> {
 	omitUnmappedProperties: boolean;
 	omittedProperties: (keyof T)[];
 }
-declare function getObjectAdapter<T>(propertyAdapters: PropertyAdapters<T>, config?: Partial<ObjectAdapterConfig<T>>): JsonAdapter<Nullable<T>, Nullable<JsonObject>>;
-declare function getByKeyAdapter<T, R extends Record<string, T>>(keyValuePairs: R, fallbackKey?: StringKeyOf<R>): JsonAdapter<Nullable<T>, Nullable<StringKeyOf<R>>>;
+declare function getObjectAdapter<T>(propertyAdapters: PropertyAdapters<T>, config?: Partial<ObjectAdapterConfig<T>>): NullishAwareJsonAdapter<T, JsonObject>;
+declare function getByKeyAdapter<T, R extends Record<string, T>>(keyValuePairs: R, fallbackKey?: StringKeyOf<R>): NullishAwareJsonAdapter<T, StringKeyOf<R>>;
 declare function getCustomAdapter<T, U extends JsonValue = JsonValue>(adapter: JsonAdapter<T, U>): JsonAdapter<T, U>;
+declare function getNullishAwareCustomAdapter<T, U extends JsonValue = JsonValue>(adapter: JsonAdapter<T, U>): NullishAwareJsonAdapter<T, U>;
 export declare const JsonAdapters: {
 	identity: typeof getIdentityAdapter;
 	isoDate: typeof getISODateAdapter;

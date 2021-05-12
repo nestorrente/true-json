@@ -4,7 +4,7 @@
  *
  * Released under the MIT License.
  *
- * Build date: 2021-05-12T19:55:56.594Z
+ * Build date: 2021-05-12T21:09:15.343Z
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -125,6 +125,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "JsonAdapters": () => (/* reexport safe */ _json_adapter_JsonAdapters__WEBPACK_IMPORTED_MODULE_0__.default)
 /* harmony export */ });
 /* harmony import */ var _json_adapter_JsonAdapters__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @/json/adapter/JsonAdapters */ "./src/main/json/adapter/JsonAdapters.ts");
+/* harmony import */ var _json_adapter_types__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @/json/adapter/types */ "./src/main/json/adapter/types.ts");
+
 
 
 
@@ -514,6 +516,18 @@ function getNullishAwareCustomAdapter(adapter) {
         }
     };
 }
+
+
+/***/ }),
+
+/***/ "./src/main/json/adapter/types.ts":
+/*!****************************************!*\
+  !*** ./src/main/json/adapter/types.ts ***!
+  \****************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+
 
 
 /***/ }),

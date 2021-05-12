@@ -1,7 +1,7 @@
 import {JsonObject} from '@/json/types';
 import JsonAdapter from '@/json/adapter/JsonAdapter';
-import getNullishAwareCustomAdapter, {Nullable} from '@/json/adapter/nullish/getNullishAwareCustomAdapter';
-import {RecursiveNullable, StringKeyOf} from '@/json/adapter/types';
+import getNullishAwareCustomAdapter from '@/json/adapter/nullish/getNullishAwareCustomAdapter';
+import {NullishAwareJsonAdapter, RecursiveNullable, StringKeyOf} from '@/json/adapter/types';
 
 export type PropertyAdapters<T> = {
 	[K in keyof T]?: JsonAdapter<RecursiveNullable<T[K]>, any>
@@ -15,7 +15,7 @@ export interface ObjectAdapterConfig<T> {
 export default function getObjectAdapter<T>(
 		propertyAdapters: PropertyAdapters<T>,
 		config?: Partial<ObjectAdapterConfig<T>>
-): JsonAdapter<Nullable<T>, Nullable<JsonObject>> {
+): NullishAwareJsonAdapter<T, JsonObject> {
 
 	const fullConfig = getFullConfig(config);
 

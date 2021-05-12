@@ -1,8 +1,6 @@
-import {Nullable} from '@/json/adapter/nullish/getNullishAwareCustomAdapter';
-import JsonAdapter from '@/json/adapter/JsonAdapter';
-import {StringKeyOf} from '@/json/adapter/types';
+import {NullishAwareJsonAdapter, StringKeyOf} from '@/json/adapter/types';
 
-export default function getByKeyAdapter<T, R extends Record<string, T>>(keyValuePairs: R, fallbackKey?: StringKeyOf<R>): JsonAdapter<Nullable<T>, Nullable<StringKeyOf<R>>> {
+export default function getByKeyAdapter<T, R extends Record<string, T>>(keyValuePairs: R, fallbackKey?: StringKeyOf<R>): NullishAwareJsonAdapter<T, StringKeyOf<R>> {
 	return {
 		adaptToJson(value) {
 
