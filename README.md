@@ -5,7 +5,7 @@
 [![License](https://img.shields.io/npm/l/make-coverage-badge.svg)](https://opensource.org/licenses/MIT)
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.0-4baaaa.svg)](CODE_OF_CONDUCT.md)
 
-[comment]: <> ([![npm]&#40;https://img.shields.io/npm/dw/@nestorrente/true-json.svg&#41;]&#40;https://www.npmjs.com/package/@nestorrente/true-json&#41;)
+[comment]: <> ([![npm]&#40;https://img.shields.io/npm/dw/true-json.svg&#41;]&#40;https://www.npmjs.com/package/true-json&#41;)
 
 ![Coverage statements](coverage/badge-statements.svg)
 ![Coverage branches](coverage/badge-branches.svg)
@@ -80,7 +80,7 @@ information. This can be done by using _JSON adapters_, which are components tha
 _jsonable_ values. Let's see an example:
 
 ```javascript
-import {JsonConverter, JsonAdapters} from '@nestorrente/true-json';
+import {JsonConverter, JsonAdapters} from 'true-json';
 
 // Create a converter using adapters to describe your object's type
 const customJsonConverter = new JsonConverter(JsonAdapters.object({
@@ -125,13 +125,13 @@ As you can see, both the `date` property and the `set` property have been deseri
 Install the latest stable version:
 
 ```bash
-npm install --save @nestorrente/true-json
+npm install --save true-json
 ```
 
 Then you can import TrueJSON objects in your modules:
 
 ```javascript
-import {JsonConverter, JsonAdapters} from '@nestorrente/true-json';
+import {JsonConverter, JsonAdapters} from 'true-json';
 ```
 
 ### Using `<script>` tag
@@ -146,10 +146,10 @@ Or, if you prefer, you can use any of the following CDN repositories:
 
 ```html
 <!-- Unpkg -->
-<script src="https://unpkg.com/@nestorrente/true-json@1.0.0-alpha.0"></script>
+<script src="https://unpkg.com/true-json@1.0.0-alpha.0"></script>
 
 <!-- JsDelivr -->
-<script src="https://cdn.jsdelivr.net/npm/@nestorrente/true-json@1.0.0-alpha.0"></script>
+<script src="https://cdn.jsdelivr.net/npm/true-json@1.0.0-alpha.0"></script>
 ```
 
 The script will create a global `TrueJSON` object, which contains all the exported objects.
@@ -159,7 +159,7 @@ The script will create a global `TrueJSON` object, which contains all the export
 ### Using `import`
 
 ```javascript
-import {JsonConverter, JsonAdapters} from '@nestorrente/true-json';
+import {JsonConverter, JsonAdapters} from 'true-json';
 
 const user = {
     name: 'John Doe',
