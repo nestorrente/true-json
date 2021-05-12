@@ -36,14 +36,18 @@ export interface MapAdapterConfig<K, V, JK extends JsonValue = JsonValue, JV ext
 }
 declare function getMapAsEntriesAdapter<K, V, JK extends JsonValue = JsonValue, JV extends JsonValue = JsonValue>(config?: Partial<MapAdapterConfig<K, V, JK, JV>>): JsonAdapter<Nullable<Map<K, V>>, Nullable<JsonArray<MapEntry<JK, JV>>>>;
 declare function getMapAsRecordAdapter<K, V, JV extends JsonValue = JsonValue>(config?: Partial<MapAdapterConfig<K, V, string, JV>>): JsonAdapter<Nullable<Map<K, V>>, Nullable<JsonObject<JV>>>;
-export declare type MappedProperties<T, P> = Partial<Record<keyof T, P>>;
-export declare type PropertyAdapters<T, P = JsonValue> = MappedProperties<T, JsonAdapter<any, P>>;
-export interface ObjectAdapterConfig<T, U> {
-	ignoreUnmappedProperties: boolean;
-	ignoredProperties: (keyof T)[];
-}
-declare function getObjectAdapter<T, U extends JsonValue = JsonValue>(propertyAdapters: PropertyAdapters<T, U>, config?: Partial<ObjectAdapterConfig<T, U>>): JsonAdapter<Nullable<T>, Nullable<JsonObject<U>>>;
 export declare type StringKeyOf<T> = string & keyof T;
+export declare type RecursiveNullable<T> = Nullable<{
+	[P in keyof T]: Nullable<T[P] extends (infer U)[] ? RecursiveNullable<U>[] : T[P] extends object ? RecursiveNullable<T[P]> : T[P]>;
+}>;
+export declare type PropertyAdapters<T> = {
+	[K in keyof T]?: JsonAdapter<RecursiveNullable<T[K]>, any>;
+};
+export interface ObjectAdapterConfig<T> {
+	omitUnmappedProperties: boolean;
+	omittedProperties: (keyof T)[];
+}
+declare function getObjectAdapter<T>(propertyAdapters: PropertyAdapters<T>, config?: Partial<ObjectAdapterConfig<T>>): JsonAdapter<Nullable<T>, Nullable<JsonObject>>;
 declare function getByKeyAdapter<T, R extends Record<string, T>>(keyValuePairs: R, fallbackKey?: StringKeyOf<R>): JsonAdapter<Nullable<T>, Nullable<StringKeyOf<R>>>;
 declare function getCustomAdapter<T, U extends JsonValue = JsonValue>(adapter: JsonAdapter<T, U>): JsonAdapter<T, U>;
 export declare const JsonAdapters: {

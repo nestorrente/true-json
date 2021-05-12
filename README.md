@@ -28,12 +28,12 @@
     + [isoDate()](#isodate)
     + [dateTimestamp()](#datetimestamp)
     + [array(elementAdapter)](#arrayelementadapter)
-    + [set([elementAdapter])](#setelementadapter)
+    + [set(\[elementAdapter\])](#setelementadapter)
     + [record(valueAdapter)](#recordvalueadapter)
-    + [mapAsEntries](#mapasentries)
-    + [mapAsRecord([config])](#mapasrecordconfig)
-    + [object(propertyAdapters[, config])](#objectpropertyadapters-config)
-    + [byKey(keyValuePairs[, fallbackKey])](#bykeykeyvaluepairs-fallbackkey)
+    + [mapAsEntries(\[config\])](#mapasentriesconfig)
+    + [mapAsRecord(\[config\])](#mapasrecordconfig)
+    + [object(propertyAdapters\[, config\])](#objectpropertyadapters-config)
+    + [byKey(keyValuePairs\[, fallbackKey\])](#bykeykeyvaluepairs-fallbackkey)
 * [Writing your own adapter](#writing-your-own-adapter)
 * [Contributing](#contributing)
 
@@ -61,8 +61,8 @@ If you see the value of the `jsonText` variable, you'll get the following JSON s
 
 ```json
 {
-	"date": "1970-01-01T00:00:00.000Z",
-	"set": {}
+    "date": "1970-01-01T00:00:00.000Z",
+    "set": {}
 }
 ```
 
@@ -76,8 +76,8 @@ Now the `date` property is a `string`, and the `set` property is an empty object
 ### TrueJSON to the rescue
 
 Using TrueJSON, you can create a `JsonConverter` that knows how to serialize and deserialize your object without loosing any
-information. This can be done by using _JSON adapters_, which are components that know how to adapt some data types to _
-jsonable_ values. Let's see an example:
+information. This can be done by using _JSON adapters_, which are components that know how to adapt some data types to
+_jsonable_ values. Let's see an example:
 
 ```javascript
 import {JsonConverter, JsonAdapters} from '@nestorrente/true-json';
@@ -102,12 +102,12 @@ If you see the value of the `jsonText` variable, now you'll get the following JS
 
 ```json
 {
-	"date": "1970-01-01T00:00:00.000Z",
-	"set": [
-		1,
-		2,
-		3
-	]
+    "date": "1970-01-01T00:00:00.000Z",
+    "set": [
+        1,
+        2,
+        3
+    ]
 }
 ```
 
@@ -183,7 +183,7 @@ console.log(userAsJson);
 
 ### Using `TrueJSON` object
 
-You can access any object just by doing `TrueJSON.[object name]`:
+You can access any object just by doing `TrueJSON.[ObjectName]`:
 
 ```javascript
 const userJsonConverter = new TrueJSON.JsonConverter(TrueJSON.JsonAdapters.object({
@@ -342,7 +342,7 @@ Set {
 }
 ```
 
-Notice that calling `JsonAdapters.set()` without any element adapter is equivalent to calling
+Notice that calling `JsonAdapters.set()` without any element adapter is equivalent to
 `JsonAdapters.set(JsonAdapters.identity())`.
 
 ### record(valueAdapter)
@@ -350,10 +350,11 @@ Notice that calling `JsonAdapters.set()` without any element adapter is equivale
 A record is a JavaScript plain object consisting of key-value pairs. In that sense, it's a similar to a `Map` (a.k.a.
 _hashtable_ or _dictionary_ in other programming languages), but its keys are always strings*.
 
-&ast; JavaScript also allows to use the `symbol` type as a key, but TrueJSON expects records to be in the form
-`{ string: any }` (for TypeScript users: `Record<string, any>`).
+<small>&ast; JavaScript allows to use the `symbol` type as a key also, but TrueJSON expects records to be in the form
+`{ string: any }` (for TypeScript users: `Record<string, any>`).</small>
 
-The record adapter receives an adapter that will be applied to each of the record values, just as the array adapter does:
+The record adapter receives an adapter that will be applied to each of the record values, just as the array adapter
+does:
 
 ```javascript
 const adapter = JsonAdapters.record(JsonAdapters.dateTimestamp());
@@ -372,28 +373,69 @@ console.log(adapter.recoverFromJson({
 Output:
 
 ```text
-[0, 1620458583563]
+{
+    "start": 0,
+    "end": 1620458583563
+}
 
-Set {
-    Date { Thu Jan 01 1970 00:00:00 GMT+0000 (Coordinated Universal Time) },
-    Date { Sat May 08 2021 07:23:03 GMT+0000 (Coordinated Universal Time) }
+{
+    "start": Date { Thu Jan 01 1970 00:00:00 GMT+0000 (Coordinated Universal Time) },
+    "end": Date { Sat May 08 2021 07:23:03 GMT+0000 (Coordinated Universal Time) }
 }
 ```
 
-### mapAsEntries
+### mapAsEntries(\[config])
 
-TODO pending.
+By default, JavaScript maps are serialized as an empty object. Using this adapter allows you to serialize them as an
+array of entries (see
+[Map.prototype.entries()](https://developer.mozilla.org/es/docs/Web/JavaScript/Reference/Global_Objects/Map/entries)):
 
 ```javascript
+const map = new Map();
+map.set('number', 42);
+map.set('string', 'hello world');
+map.set('array', [1, 2, 3]);
+
+const adapter = JsonAdapters.mapAsEntries();
+
+console.log(adapter.adaptToJson(map));
+
+console.log(adapter.recoverFromJson([
+    ['number', 42],
+    ['string', 'hello world'],
+    ['array', [1, 2, 3]]
+]));
+```
+
+Output:
+
+```text
+[
+    ["number", 42],
+    ["string", "hello world"],
+    ["array", [1, 2, 3]]
+]
+
+Map {
+    "number" => 42,
+    "string" => "hello world",
+    "array" => [1, 2, 3]
+}
+```
+
+As map's keys and values can be any type of object, you can also specify a `keyAdapter` and a `valueAdapter`:
+
+```javascript
+const map = new Map();
+map.set(new Date(0), new Set([1, 2, 3]));
+map.set(new Date(1620458583563), new Set([4, 5, 6]));
+
 const adapter = JsonAdapters.mapAsEntries({
     keyAdapter: JsonAdapters.dateTimestamp(),
     valueAdapter: JsonAdapters.set(),
 });
 
-console.log(adapter.adaptToJson(new Map([
-    [new Date(0), new Set([1, 2, 3])],
-    [new Date(1620458583563), new Set([4, 5, 6])]
-])));
+console.log(adapter.adaptToJson(map));
 
 console.log(adapter.recoverFromJson([
     [0, [1, 2, 3]],
@@ -415,22 +457,66 @@ Map {
 }
 ```
 
-TODO comment that if you don't pass any keyAdapter or valueAdapter, `identity()` will be used.
+Notice that calling `JsonAdapters.mapAsEntries()` without key and value adapters is equivalent to:
+
+```javascript
+JsonAdapters.mapAsEntries({
+    keyAdapter: JsonAdapters.identity(),
+    valueAdapter: JsonAdapters.identity()
+});
+```
 
 ### mapAsRecord(\[config])
 
-TODO pending.
+By default, JavaScript maps are serialized as an empty object. Using this adapter allows you to serialize them as a
+plain JS object (a.k.a. record):
 
 ```javascript
+const map = new Map();
+map.set('number', 42);
+map.set('string', 'hello world');
+map.set('array', [1, 2, 3]);
+
+const adapter = JsonAdapters.mapAsRecord();
+
+console.log(adapter.adaptToJson(map));
+
+console.log(adapter.recoverFromJson({
+    number: 42,
+    string: 'hello world',
+    array: [1, 2, 3]
+}));
+```
+
+Output:
+
+```text
+{
+    "number": 42,
+    "string": "hello world",
+    "array": [1, 2, 3]
+}
+
+Map {
+    "number" => 42,
+    "string" => "hello world",
+    "array" => [1, 2, 3]
+}
+```
+
+As map's keys and values can be any type of object, you can also specify a `keyAdapter` and a `valueAdapter`:
+
+```javascript
+const map = new Map();
+map.set(new Date(0), new Set([1, 2, 3]));
+map.set(new Date(1620458583563), new Set([4, 5, 6]));
+
 const adapter = JsonAdapters.mapAsRecord({
     keyAdapter: JsonAdapters.isoDate(),
     valueAdapter: JsonAdapters.set(),
 });
 
-console.log(adapter.adaptToJson(new Map([
-    [new Date(0), new Set([1, 2, 3])],
-    [new Date(1620458583563), new Set([4, 5, 6])]
-])));
+console.log(adapter.adaptToJson(map));
 
 console.log(adapter.recoverFromJson({
     "1970-01-01T00:00:00.000Z": [1, 2, 3],
@@ -452,25 +538,38 @@ Map {
 }
 ```
 
-TODO comment that if you don't pass any keyAdapter or valueAdapter, `identity()` will be used.
+Notice that calling `JsonAdapters.mapAsRecord()` without key and value adapters is equivalent to:
+
+```javascript
+JsonAdapters.mapAsRecord({
+    keyAdapter: JsonAdapters.identity(),
+    valueAdapter: JsonAdapters.identity()
+});
+```
 
 ### object(propertyAdapters\[, config])
 
-TODO pending.
+This adapter allows you to serialize &amp; deserialize any plain JS object, specifying different adapters for each of
+its properties:
 
 ```javascript
+const film = {
+    name: 'Harry Potter and the Deathly Hallows - Part 2',
+    releaseDate: new Date('2011-07-15'),
+    mainCharacters: new Set(['Harry Potter', 'Hermione Granger', 'Ron Weasley'])
+};
+
 const adapter = JsonAdapters.object({
-    releaseDate: JsonAdapters.isoDate()
+    releaseDate: JsonAdapters.isoDate(),
+    mainCharacters: JsonAdapters.set()
 });
 
-console.log(adapter.adaptToJson({
-    name: 'Harry Potter and the Deathly Hallows - Part 2',
-    releaseDate: new Date('2011-07-15')
-}));
+console.log(adapter.adaptToJson(film));
 
 console.log(adapter.recoverFromJson({
     name: 'Harry Potter and the Deathly Hallows - Part 2',
-    releaseDate: '2011-07-15T00:00:00.000Z'
+    releaseDate: '2011-07-15T00:00:00.000Z',
+    mainCharacters: ['Harry Potter', 'Hermione Granger', 'Ron Weasley']
 }));
 ```
 
@@ -479,20 +578,71 @@ Output:
 ```text
 {
     "name": "Harry Potter and the Deathly Hallows - Part 2",
-    "releaseDate": "2011-07-15T00:00:00.000Z"
+    "releaseDate": "2011-07-15T00:00:00.000Z",
+    "mainCharacters": ["Harry Potter", "Hermione Granger", "Ron Weasley"]
 }
 
 {
     "name": "Harry Potter and the Deathly Hallows - Part 2",
-    "releaseDate": Date { Fri Jul 15 2011 00:00:00 GMT+0000 (Coordinated Universal Time) }
+    "releaseDate": Date { Fri Jul 15 2011 00:00:00 GMT+0000 (Coordinated Universal Time) },
+    "mainCharacters": Set { "Harry Potter", "Hermione Granger", "Ron Weasley" }
 }
 ```
 
-TODO comment that `identity()` adapter will be use for all unmapped properties.
+By default, any unmapped property will be adapted using the [identity adapter](#identity).
+
+#### Configuration options
+
+The object adapter allows to modify its default behaviour using the following configuration options:
+
+| Property | Type | Default value | Description |
+|----------|------|---------------|-------------|
+| `omitUnmappedProperties` | `boolean` | `false` | When `true`, all unmapped properties won't be present on the resultant object |
+| `omittedProperties` | `string[]` | `[]` | Allows to specify which properties should be omitted manually |
+
+Example using `omittedProperties` option:
+
+```javascript
+const adapter = JsonAdapters.object(
+    {
+        birthDate: JsonAdapters.dateTimestamp()
+    },
+    {
+        omittedProperties: ['age']
+    }
+);
+
+console.log(adapter.adaptToJson({
+  name: 'John Doe',
+  birthDate: new Date('1970-01-01'),
+  age: 51
+}));
+
+console.log(adapter.recoverFromJson({
+  name: 'John Doe',
+  birthDate: 0,
+  age: 51
+}));
+```
+
+Output:
+
+```text
+{
+    "name": "John Doe",
+    "birthDate": 0
+}
+
+{
+    "name": "John Doe",
+    "birthDate": Date { Thu Jan 01 1970 00:00:00 GMT+0000 (Coordinated Universal Time) }
+}
+```
 
 ### byKey(keyValuePairs\[, fallbackKey])
 
-TODO pending.
+This adapter allows you to serialize a value using its corresponding key of the provided key-value pairs object. This is
+specially useful when working with enumerated values:
 
 ```javascript
 const ScalingStrategies = {
@@ -513,10 +663,12 @@ Output:
 ```text
 "FAST"
 
-function SmoothScalingStrategy() { /* ... */ }
+SmoothScalingStrategy { }
 ```
 
-If an unknown value is passed to any of the methods, `undefined` is returned:
+If an unknown value&ast; is passed to any of the methods, `undefined` is returned:
+
+<small>&ast; this includes `null` and `undefined` values if they are not present in the key-value pairs object.</small>
 
 ```javascript
 const ScalingStrategies = {
@@ -561,17 +713,96 @@ Output:
 ```text
 "DEFAULT"
 
-function DefaultScalingStrategy() { /* ... */ }
+DefaultScalingStrategy { }
 ```
 
 ## Writing your own adapter
 
-TODO write about `custom()` and `nullishAwareCustom()`.
+You can write your own adapter using the `JsonAdapters.custom()` method:
+
+```javascript
+const dateToArrayAdapter = JsonAdapters.custom({
+    adaptToJson(date) {
+        return [date.getFullYear(), date.getMonth(), date.getDate()];
+    },
+    recoverFromJson(array) {
+        const [year, month, date] = array;
+        return new Date(year, month, date);
+    }
+});
+```
+
+Then, you can use it as any other adapter:
+
+```javascript
+const objectAdapter = JsonAdapters.object({
+    birthDate: dateToArrayAdapter
+});
+
+console.log(objectAdapter.adaptToJson({
+    name: 'John Doe',
+    birthDate: new Date('1970-01-01')
+}));
+
+console.log(objectAdapter.recoverFromJson({
+    name: 'John Doe',
+    birthDate: [1970, 0, 1]
+}));
+```
+
+Output:
+
+```text
+{
+    "name": "John Doe",
+    "birthDate": [1970, 0, 1]
+}
+
+{
+    "name": "John Doe",
+    "birthDate": Date { Thu Jan 01 1970 00:00:00 GMT+0000 (Coordinated Universal Time) }
+}
+```
+
+Please, notice that **custom adapters need to manually handle `null` and `undefined` values**. If you want those values
+to be automatically handled, you can use `JsonAdapters.nullishAwareCustom()`:
+
+```javascript
+const dateToArrayAdapter = JsonAdapters.nullishAwareCustom({
+    adaptToJson(date) {
+        return [date.getFullYear(), date.getMonth(), date.getDate()];
+    },
+    recoverFromJson(array) {
+        const [year, month, date] = array;
+        return new Date(year, month, date);
+    }
+});
+
+console.log(dateToArrayAdapter.adaptToJson(new Date('1970-01-01')));
+console.log(dateToArrayAdapter.adaptToJson(null));
+console.log(dateToArrayAdapter.adaptToJson(undefined));
+
+console.log(dateToArrayAdapter.recoverFromJson([1970, 0, 1]));
+console.log(dateToArrayAdapter.recoverFromJson(null));
+console.log(dateToArrayAdapter.recoverFromJson(undefined));
+```
+
+Output:
+
+```text
+[1970, 0, 1]
+null
+undefined
+
+Date { Thu Jan 01 1970 00:00:00 GMT+0000 (Coordinated Universal Time) }
+null
+undefined
+```
 
 ## Contributing
 
-This is a library developed by one single person, any bug report, suggestion, pull request, or any other kind of
-feedback will be really appreciated.
+This is a library maintained by one person, so any bug report, suggestion, pull request, or any other kind of
+feedback will be really appreciated :slightly_smiling_face:
 
 Please contribute using [GitHub Flow](https://guides.github.com/introduction/flow). Create a branch from the `develop`
 one, add commits, and [open a pull request](https://github.com/nestorrente/true-json/compare).

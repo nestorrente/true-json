@@ -91,7 +91,7 @@ describe('Ignoring unmapped properties', () => {
 			}
 		}
 	}, {
-		ignoreUnmappedProperties: true
+		omitUnmappedProperties: true
 	});
 
 	test(`Adapt Object to JsonObject`, () => {
@@ -136,7 +136,7 @@ describe('Ignoring properties explicitly', () => {
 	type SerializableTestObject = TestObject & JsonObject;
 
 	const objectAdapter = getObjectAdapter<TestObject>({}, {
-		ignoredProperties: ['text']
+		omittedProperties: ['text']
 	});
 
 	test(`Adapt Object to JsonObject`, () => {

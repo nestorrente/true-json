@@ -4,7 +4,7 @@
  *
  * Released under the MIT License.
  *
- * Build date: 2021-05-08T11:07:11.261Z
+ * Build date: 2021-05-12T19:39:19.198Z
  */
 var TrueJSON;
 /******/ (() => { // webpackBootstrap
@@ -309,23 +309,23 @@ function getObjectAdapter(propertyAdapters, config) {
     });
 }
 function getFullConfig(partialConfig) {
-    return Object.assign({ ignoreUnmappedProperties: false, ignoredProperties: [] }, partialConfig);
+    return Object.assign({ omitUnmappedProperties: false, omittedProperties: [] }, partialConfig);
 }
 function getObjectEntries(object, propertyAdapters, config) {
-    const { ignoreUnmappedProperties, ignoredProperties } = config;
+    const { omitUnmappedProperties, omittedProperties } = config;
     const entries = Object.entries(object);
-    if (!ignoreUnmappedProperties && ignoredProperties.length === 0) {
+    if (!omitUnmappedProperties && omittedProperties.length === 0) {
         return entries;
     }
     return entries.filter(([key]) => !shouldPropertyBeIgnored(key, propertyAdapters, config));
 }
 function shouldPropertyBeIgnored(propertyName, propertyAdapters, config) {
     return isIgnoredProperty(propertyName, config)
-        || config.ignoreUnmappedProperties && isUnmappedProperty(propertyName, propertyAdapters);
+        || config.omitUnmappedProperties && isUnmappedProperty(propertyName, propertyAdapters);
 }
 function isIgnoredProperty(propertyName, config) {
-    const { ignoredProperties } = config;
-    return ignoredProperties.includes(propertyName);
+    const { omittedProperties } = config;
+    return omittedProperties.includes(propertyName);
 }
 function isUnmappedProperty(propertyName, propertyAdapters) {
     return !propertyAdapters.hasOwnProperty(propertyName);

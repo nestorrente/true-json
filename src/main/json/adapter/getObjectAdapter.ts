@@ -1,19 +1,21 @@
-import {JsonObject, JsonValue} from '@/json/types';
+import {JsonObject} from '@/json/types';
 import JsonAdapter from '@/json/adapter/JsonAdapter';
 import getNullishAwareCustomAdapter, {Nullable} from '@/json/adapter/nullish/getNullishAwareCustomAdapter';
+import {RecursiveNullable, StringKeyOf} from '@/json/adapter/types';
 
-export type MappedProperties<T, P> = Partial<Record<keyof T, P>>;
-export type PropertyAdapters<T, P = JsonValue> = MappedProperties<T, JsonAdapter<any, P>>
-
-export interface ObjectAdapterConfig<T, U> {
-	ignoreUnmappedProperties: boolean;
-	ignoredProperties: (keyof T)[];
+export type PropertyAdapters<T> = {
+	[K in keyof T]?: JsonAdapter<RecursiveNullable<T[K]>, any>
 }
 
-export default function getObjectAdapter<T, U extends JsonValue = JsonValue>(
-		propertyAdapters: PropertyAdapters<T, U>,
-		config?: Partial<ObjectAdapterConfig<T, U>>
-): JsonAdapter<Nullable<T>, Nullable<JsonObject<U>>> {
+export interface ObjectAdapterConfig<T> {
+	omitUnmappedProperties: boolean;
+	omittedProperties: (keyof T)[];
+}
+
+export default function getObjectAdapter<T>(
+		propertyAdapters: PropertyAdapters<T>,
+		config?: Partial<ObjectAdapterConfig<T>>
+): JsonAdapter<Nullable<T>, Nullable<JsonObject>> {
 
 	const fullConfig = getFullConfig(config);
 
@@ -22,7 +24,7 @@ export default function getObjectAdapter<T, U extends JsonValue = JsonValue>(
 
 			const mappedEntries = getObjectEntries(object, propertyAdapters, fullConfig)
 					.map(([key, value]) => {
-						const adapter: JsonAdapter<any, JsonValue> | undefined = propertyAdapters[key as keyof T];
+						const adapter = propertyAdapters[key];
 						return [key, adapter ? adapter.adaptToJson(value) : value];
 					});
 
@@ -33,7 +35,7 @@ export default function getObjectAdapter<T, U extends JsonValue = JsonValue>(
 
 			const mappedEntries = getObjectEntries(jsonObject, propertyAdapters, fullConfig)
 					.map(([key, value]) => {
-						const adapter: JsonAdapter<any, U> | undefined = propertyAdapters[key as keyof T];
+						const adapter: JsonAdapter<any, any> | undefined = propertyAdapters[key as keyof T];
 						return [key, adapter ? adapter.recoverFromJson(value) : value];
 					});
 
@@ -43,24 +45,24 @@ export default function getObjectAdapter<T, U extends JsonValue = JsonValue>(
 	});
 }
 
-function getFullConfig<T, U extends JsonValue>(partialConfig?: Partial<ObjectAdapterConfig<T, U>>): ObjectAdapterConfig<T, U> {
+function getFullConfig<T>(partialConfig?: Partial<ObjectAdapterConfig<T>>): ObjectAdapterConfig<T> {
 	return {
-		ignoreUnmappedProperties: false,
-		ignoredProperties: [],
+		omitUnmappedProperties: false,
+		omittedProperties: [],
 		...partialConfig
 	};
 }
 
-function getObjectEntries(object: Record<string, any>, propertyAdapters: PropertyAdapters<any, any>, config: ObjectAdapterConfig<any, any>) {
+function getObjectEntries<T extends Record<string, any>>(object: T, propertyAdapters: PropertyAdapters<any>, config: ObjectAdapterConfig<any>) {
 
 	const {
-		ignoreUnmappedProperties,
-		ignoredProperties
+		omitUnmappedProperties,
+		omittedProperties
 	} = config;
 
-	const entries = Object.entries(object);
+	const entries: [StringKeyOf<T>, any][] = Object.entries(object);
 
-	if (!ignoreUnmappedProperties && ignoredProperties.length === 0) {
+	if (!omitUnmappedProperties && omittedProperties.length === 0) {
 		return entries;
 	}
 
@@ -68,16 +70,16 @@ function getObjectEntries(object: Record<string, any>, propertyAdapters: Propert
 
 }
 
-function shouldPropertyBeIgnored(propertyName: string, propertyAdapters: PropertyAdapters<any, any>, config: ObjectAdapterConfig<any, any>) {
+function shouldPropertyBeIgnored(propertyName: string, propertyAdapters: PropertyAdapters<any>, config: ObjectAdapterConfig<any>) {
 	return isIgnoredProperty(propertyName, config)
-			|| config.ignoreUnmappedProperties && isUnmappedProperty(propertyName, propertyAdapters);
+			|| config.omitUnmappedProperties && isUnmappedProperty(propertyName, propertyAdapters);
 }
 
-function isIgnoredProperty(propertyName: string, config: ObjectAdapterConfig<any, any>) {
-	const {ignoredProperties} = config;
-	return ignoredProperties.includes(propertyName);
+function isIgnoredProperty(propertyName: string, config: ObjectAdapterConfig<any>) {
+	const {omittedProperties} = config;
+	return omittedProperties.includes(propertyName);
 }
 
-function isUnmappedProperty(propertyName: string, propertyAdapters: PropertyAdapters<any, any>) {
+function isUnmappedProperty(propertyName: string, propertyAdapters: PropertyAdapters<any>) {
 	return !propertyAdapters.hasOwnProperty(propertyName);
 }
