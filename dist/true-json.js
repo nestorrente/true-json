@@ -1,10 +1,10 @@
 /*!
- * TrueJSON: respectful JSON serialization & deserialization for JavaScript v1.0.0-alpha.0
+ * TrueJSON: respectful JSON serialization & deserialization for JavaScript v1.0.0-alpha.1
  * https://github.com/nestorrente/true-json
  *
  * Released under the MIT License.
  *
- * Build date: 2021-05-12T19:39:19.198Z
+ * Build date: 2021-05-12T19:55:56.594Z
  */
 var TrueJSON;
 /******/ (() => { // webpackBootstrap
