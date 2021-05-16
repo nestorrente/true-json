@@ -1,20 +1,20 @@
 /*!
- * TrueJSON: respectful JSON serialization & deserialization for JavaScript v1.0.0-alpha.1
+ * TrueJSON: respectful JSON serialization & deserialization for JavaScript v1.0.0-alpha.2
  * https://github.com/nestorrente/true-json
  *
  * Released under the MIT License.
  *
- * Build date: 2021-05-12T21:09:15.343Z
+ * Build date: 2021-05-16T08:34:45.133Z
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
 	else if(typeof define === 'function' && define.amd)
 		define([], factory);
-	else {
-		var a = factory();
-		for(var i in a) (typeof exports === 'object' ? exports : root)[i] = a[i];
-	}
+	else if(typeof exports === 'object')
+		exports["TrueJSON"] = factory();
+	else
+		root["TrueJSON"] = factory();
 })(typeof self !== 'undefined' ? self : this, function() {
 return /******/ (() => { // webpackBootstrap
 /******/ 	"use strict";
@@ -642,4 +642,4 @@ __webpack_require__.r(__webpack_exports__);
 /******/ })()
 ;
 });
-//# sourceMappingURL=true-json.esm.js.map
+//# sourceMappingURL=true-json.umd.js.map

@@ -1,8 +1,3 @@
-import {JsonConverter, JsonAdapters} from './json/exports';
-
-const TrueJSON = {
-    JsonConverter,
-    JsonAdapters
-};
+import * as TrueJSON from './json/exports';
 
 export default TrueJSON;

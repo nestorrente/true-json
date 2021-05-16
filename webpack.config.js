@@ -15,6 +15,7 @@ Build date: ${new Date().toISOString()}
 const commonConfig = {
     devtool: 'source-map',
     mode: 'development',
+    // mode: 'production',
     module: {
         rules: [
             {
@@ -28,11 +29,7 @@ const commonConfig = {
         extensions: ['.ts', '.js'],
         plugins: [
             new TsconfigPathsPlugin()
-        ],
-        fallback: {
-            fs: false,
-            path: false
-        }
+        ]
     },
     plugins: [
         new webpack.BannerPlugin({banner: BUNDLE_HEADER})
@@ -61,8 +58,9 @@ const moduleConfig = {
     entry: './src/main/module-entry.ts',
     output: {
         ...commonConfig.output,
-        filename: 'true-json.esm.js',
+        filename: 'true-json.umd.js',
         library: {
+            name: 'TrueJSON',
             type: 'umd'
         },
         globalObject: 'typeof self !== \'undefined\' ? self : this'

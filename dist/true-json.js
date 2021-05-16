@@ -1,10 +1,10 @@
 /*!
- * TrueJSON: respectful JSON serialization & deserialization for JavaScript v1.0.0-alpha.1
+ * TrueJSON: respectful JSON serialization & deserialization for JavaScript v1.0.0-alpha.2
  * https://github.com/nestorrente/true-json
  *
  * Released under the MIT License.
  *
- * Build date: 2021-05-12T21:09:15.343Z
+ * Build date: 2021-05-16T08:34:45.133Z
  */
 var TrueJSON;
 /******/ (() => { // webpackBootstrap
@@ -626,12 +626,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _json_exports__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./json/exports */ "./src/main/json/exports.ts");
 
 
-const TrueJSON = {
-    JsonConverter: _json_exports__WEBPACK_IMPORTED_MODULE_0__.JsonConverter,
-    JsonAdapters: _json_exports__WEBPACK_IMPORTED_MODULE_0__.JsonAdapters
-};
-
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (TrueJSON);
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_json_exports__WEBPACK_IMPORTED_MODULE_0__);
 
 })();
 

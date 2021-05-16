@@ -71,7 +71,8 @@ As you can see, your set elements haven't been serialized as you would expect. M
 
 ![Deserialized object using native JSON (Google Chrome console)](docs/img/deserialized-object-native.png "Deserialized object using native JSON (Google Chrome console)")
 
-Now the `date` property is a `string`, and the `set` property is an empty object, which is not probably the wanted behavior.
+Now the `date` property is a `string`, and the `set` property is an empty object, which, probably, isn't the desired
+behaviour.
 
 ### TrueJSON to the rescue
 
