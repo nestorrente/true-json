@@ -3,30 +3,30 @@ import getCustomAdapter, {JsonAdapterWithNullishSupport} from '@/json/adapter/ge
 
 // TODO improve types so unknown values are not accepted
 export default function getByKeyAdapter<T, R extends Record<string, T>>(
-		keyValuePairs: R
+        keyValuePairs: R
 ): JsonAdapterWithNullishSupport<T, StringKeyOf<R>> {
-	return getCustomAdapter({
-		adaptToJson(value) {
+    return getCustomAdapter({
+        adaptToJson(value) {
 
-			const entry = Object.entries(keyValuePairs).find(([, entryValue]) => value === entryValue);
+            const entry = Object.entries(keyValuePairs).find(([, entryValue]) => value === entryValue);
 
-			if (!entry) {
-				throw new Error('Provided value is not associated with any key');
-			}
+            if (!entry) {
+                throw new Error('Provided value is not associated with any key');
+            }
 
-			const [key] = entry;
+            const [key] = entry;
 
-			return key;
+            return key;
 
-		},
-		recoverFromJson(key) {
+        },
+        recoverFromJson(key) {
 
-			if (key == null || !keyValuePairs.hasOwnProperty(key)) {
-				throw new Error('Provided key is not associated with any value');
-			}
+            if (key == null || !keyValuePairs.hasOwnProperty(key)) {
+                throw new Error('Provided key is not associated with any value');
+            }
 
-			return keyValuePairs[key];
+            return keyValuePairs[key];
 
-		}
-	});
+        }
+    });
 }

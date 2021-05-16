@@ -8,15 +8,15 @@ export default function getSetAdapter<T extends JsonValue = JsonValue>(): JsonAd
 export default function getSetAdapter<T, U extends JsonValue = JsonValue>(elementAdapter: JsonAdapter<T, U>): JsonAdapterWithNullishSupport<Set<T>, JsonArray<U>>;
 export default function getSetAdapter<T, >(elementAdapter: JsonAdapter<T, any> = getIdentityAdapter()): JsonAdapterWithNullishSupport<Set<T>, JsonArray<any>> {
 
-	const arrayAdapter = getArrayAdapter(elementAdapter);
+    const arrayAdapter = getArrayAdapter(elementAdapter);
 
-	return getCustomAdapter({
-		adaptToJson(set) {
-			return arrayAdapter.adaptToJson([...set])!;
-		},
-		recoverFromJson(jsonArray) {
-			return new Set(arrayAdapter.recoverFromJson(jsonArray));
-		}
-	});
+    return getCustomAdapter({
+        adaptToJson(set) {
+            return arrayAdapter.adaptToJson([...set])!;
+        },
+        recoverFromJson(jsonArray) {
+            return new Set(arrayAdapter.recoverFromJson(jsonArray));
+        }
+    });
 
 }
