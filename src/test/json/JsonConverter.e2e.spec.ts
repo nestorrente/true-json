@@ -111,7 +111,7 @@ const converter = new JsonConverter(JsonAdapters.object<TestObject>({
 	championshipStartDate: JsonAdapters.dateTimestamp(),
 	championshipEndDate: JsonAdapters.dateTimestamp(),
 	active: booleanToStringAdapter,
-	nullableBoolean: JsonAdapters.nullishAwareCustom(booleanToStringAdapter)
+	nullableBoolean: booleanToStringAdapter.withNullSupport()
 }));
 
 describe('Complex object', () => {

@@ -1,12 +1,11 @@
 import {JsonObject, JsonValue} from '@/json/types';
 import JsonAdapter from '@/json/adapter/JsonAdapter';
-import getNullishAwareCustomAdapter from '@/json/adapter/nullish/getNullishAwareCustomAdapter';
-import {NullishAwareJsonAdapter} from '@/json/adapter/types';
+import getCustomAdapter, {JsonAdapterWithNullishSupport} from '@/json/adapter/getCustomAdapter';
 
 export default function getRecordAdapter<T, U extends JsonValue = JsonValue>(
 		valueAdapter: JsonAdapter<T, U>
-): NullishAwareJsonAdapter<Record<string, T>, JsonObject<U>> {
-	return getNullishAwareCustomAdapter({
+): JsonAdapterWithNullishSupport<Record<string, T>, JsonObject<U>> {
+	return getCustomAdapter({
 		adaptToJson(object) {
 
 			const mappedEntries = Object.entries(object)

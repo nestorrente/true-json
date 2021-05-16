@@ -1,8 +1,7 @@
-import getNullishAwareCustomAdapter from '@/json/adapter/nullish/getNullishAwareCustomAdapter';
-import {NullishAwareJsonAdapter} from '@/json/adapter/types';
+import getCustomAdapter, {JsonAdapterWithNullishSupport} from '@/json/adapter/getCustomAdapter';
 
-export default function getISODateAdapter(): NullishAwareJsonAdapter<Date, string> {
-	return getNullishAwareCustomAdapter({
+export default function getISODateAdapter(): JsonAdapterWithNullishSupport<Date, string> {
+	return getCustomAdapter({
 		adaptToJson(date) {
 			return date.toJSON();
 		},

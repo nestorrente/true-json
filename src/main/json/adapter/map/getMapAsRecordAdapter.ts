@@ -1,16 +1,15 @@
 import {JsonObject, JsonValue} from '@/json/types';
 import {MapAdapterConfig} from '@/json/adapter/map/types';
 import getMapAsEntriesAdapter from '@/json/adapter/map/getMapAsEntriesAdapter';
-import getNullishAwareCustomAdapter from '@/json/adapter/nullish/getNullishAwareCustomAdapter';
-import {NullishAwareJsonAdapter} from '@/json/adapter/types';
+import getCustomAdapter, {JsonAdapterWithNullishSupport} from '@/json/adapter/getCustomAdapter';
 
 export default function getMapAsRecordAdapter<K, V, JV extends JsonValue = JsonValue>(
 		config?: Partial<MapAdapterConfig<K, V, string, JV>>
-): NullishAwareJsonAdapter<Map<K, V>, JsonObject<JV>> {
+): JsonAdapterWithNullishSupport<Map<K, V>, JsonObject<JV>> {
 
 	const mapAsEntriesAdapter = getMapAsEntriesAdapter(config);
 
-	return getNullishAwareCustomAdapter({
+	return getCustomAdapter({
 		adaptToJson(map) {
 			const adaptedEntries = mapAsEntriesAdapter.adaptToJson(map)!;
 			return Object.fromEntries(adaptedEntries);

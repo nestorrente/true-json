@@ -8,6 +8,7 @@ import getMapAsEntriesAdapter from '@/json/adapter/map/getMapAsEntriesAdapter';
 import getMapAsRecordAdapter from '@/json/adapter/map/getMapAsRecordAdapter';
 import getObjectAdapter from '@/json/adapter/getObjectAdapter';
 import getByKeyAdapter from '@/json/adapter/getByKeyAdapter';
+import getByKeyLenientAdapter from '@/json/adapter/getByKeyLenientAdapter';
 import getCustomAdapter from '@/json/adapter/getCustomAdapter';
 import getNullishAwareCustomAdapter from '@/json/adapter/nullish/getNullishAwareCustomAdapter';
 
@@ -22,6 +23,7 @@ const JsonAdapters = {
 	mapAsRecord: getMapAsRecordAdapter,
 	object: getObjectAdapter,
 	byKey: getByKeyAdapter,
+	byKeyLenient: getByKeyLenientAdapter,
 	custom: getCustomAdapter,
 	nullishAwareCustom: getNullishAwareCustomAdapter
 };
