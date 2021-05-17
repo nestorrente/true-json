@@ -34,6 +34,10 @@
     + [mapAsRecord(\[config\])](#mapasrecordconfig)
     + [object(propertyAdapters\[, config\])](#objectpropertyadapters-config)
     + [byKey(keyValuePairs\[, fallbackKey\])](#bykeykeyvaluepairs-fallbackkey)
+    + [Handling nullish values](#handling-nullish-values)
+        + [nullishAware(adapter)](#nullishawareadapter)
+        + [nullAware(adapter)](#nullawareadapter)
+        + [undefinedAware(adapter)](#undefinedawareadapter)
 * [Writing your own adapter](#writing-your-own-adapter)
 * [Contributing](#contributing)
 
@@ -667,7 +671,7 @@ Output:
 SmoothScalingStrategy { }
 ```
 
-If an unknown value&ast; is passed to any of the methods, `undefined` is returned:
+If any unknown value&ast; is passed to `adaptToJson()` or `recoverFromJson()` methods, `undefined` is returned:
 
 <small>&ast; this includes `null` and `undefined` values if they are not present in the key-value pairs object.</small>
 
@@ -717,6 +721,134 @@ Output:
 DefaultScalingStrategy { }
 ```
 
+### Handling nullish values
+
+Extracted from [MDN](https://developer.mozilla.org/en-US/docs/Glossary/Nullish):
+
+> In JavaScript, a nullish value is the value which is either `null` or `undefined`.
+
+Adapters discussed in previous sections are not designed taking _nullish values_ into account. If you try to use them
+for serializing or deserializing `null` or `undefined` values, they could throw an unexpected error.
+
+The same applies when you [write your own adapters](#writing-your-own-adapter). If you don't write your adapter having
+this in mind, it may throw an error when receiving a _nullish value_.
+
+Fortunately, TrueJSON allows to wrap any existing adapter using a _proxy adapter_ that handles `null` and `undefined`
+values:
+
+#### nullishAware(adapter)
+
+Wraps an existing adapter using a proxy that handles both `null` and `undefined` values. This proxy will return the
+received value when it's a _nullish value_; otherwise it will call the real adapter:
+
+```javascript
+const hoursToMinutesAdapter = JsonAdapters.nullishAware({
+    adaptToJson(value) {
+        return value * 60;
+    },
+    recoverFromJson(value) {
+        return value / 60;
+    }
+});
+
+console.log(hoursToMinutesAdapter.adaptToJson(2.5));
+console.log(hoursToMinutesAdapter.adaptToJson(null));
+console.log(hoursToMinutesAdapter.adaptToJson(undefined));
+
+console.log(hoursToMinutesAdapter.recoverFromJson(150));
+console.log(hoursToMinutesAdapter.recoverFromJson(null));
+console.log(hoursToMinutesAdapter.recoverFromJson(undefined));
+```
+
+Output:
+
+```text
+150
+null
+undefined
+
+2.5
+null
+undefined
+```
+
+#### nullAware(adapter)
+
+Wraps an existing adapter using a proxy that handles only `null` values. This proxy will return `null` when receiving
+the `null` value; otherwise it will call the real adapter:
+
+```javascript
+const hoursToMinutesAdapter = JsonAdapters.nullishAware({
+    adaptToJson(value) {
+        return value * 60;
+    },
+    recoverFromJson(value) {
+        return value / 60;
+    }
+});
+
+console.log(hoursToMinutesAdapter.adaptToJson(2.5));
+console.log(hoursToMinutesAdapter.adaptToJson(null));
+console.log(hoursToMinutesAdapter.adaptToJson(undefined));
+
+console.log(hoursToMinutesAdapter.recoverFromJson(150));
+console.log(hoursToMinutesAdapter.recoverFromJson(null));
+console.log(hoursToMinutesAdapter.recoverFromJson(undefined));
+```
+
+Output:
+
+```text
+150
+null
+NaN
+
+2.5
+null
+NaN
+```
+
+Notice that `NaN` is returned when using the `undefined` value.
+
+#### undefinedAware(adapter)
+
+Wraps an existing adapter using a proxy that handles only `undefined` values. This proxy will return `undefined` when
+receiving the `undefined` value; otherwise it will call the real adapter:
+
+```javascript
+const hoursToMinutesAdapter = JsonAdapters.nullishAware({
+    adaptToJson(value) {
+        return value * 60;
+    },
+    recoverFromJson(value) {
+        return value / 60;
+    }
+});
+
+console.log(hoursToMinutesAdapter.adaptToJson(2.5));
+console.log(hoursToMinutesAdapter.adaptToJson(null));
+console.log(hoursToMinutesAdapter.adaptToJson(undefined));
+
+console.log(hoursToMinutesAdapter.recoverFromJson(150));
+console.log(hoursToMinutesAdapter.recoverFromJson(null));
+console.log(hoursToMinutesAdapter.recoverFromJson(undefined));
+```
+
+Output:
+
+```text
+150
+0
+undefined
+
+2.5
+0
+undefined
+```
+
+Notice that `0` is returned when using the `null` value. This happens because `null` is treated as `0` when used in
+arithmetic operations.
+
 ## Writing your own adapter
 
 You can write your own adapter using the `JsonAdapters.custom()` method:
@@ -763,41 +895,6 @@ Output:
     "name": "John Doe",
     "birthDate": Date { Thu Jan 01 1970 00:00:00 GMT+0000 (Coordinated Universal Time) }
 }
-```
-
-Please, notice that **custom adapters need to manually handle `null` and `undefined` values**. If you want those values
-to be automatically handled, you can use `JsonAdapters.nullishAwareCustom()`:
-
-```javascript
-const dateToArrayAdapter = JsonAdapters.nullishAwareCustom({
-    adaptToJson(date) {
-        return [date.getFullYear(), date.getMonth(), date.getDate()];
-    },
-    recoverFromJson(array) {
-        const [year, month, date] = array;
-        return new Date(year, month, date);
-    }
-});
-
-console.log(dateToArrayAdapter.adaptToJson(new Date('1970-01-01')));
-console.log(dateToArrayAdapter.adaptToJson(null));
-console.log(dateToArrayAdapter.adaptToJson(undefined));
-
-console.log(dateToArrayAdapter.recoverFromJson([1970, 0, 1]));
-console.log(dateToArrayAdapter.recoverFromJson(null));
-console.log(dateToArrayAdapter.recoverFromJson(undefined));
-```
-
-Output:
-
-```text
-[1970, 0, 1]
-null
-undefined
-
-Date { Thu Jan 01 1970 00:00:00 GMT+0000 (Coordinated Universal Time) }
-null
-undefined
 ```
 
 ## Contributing

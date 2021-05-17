@@ -10,7 +10,9 @@ import getObjectAdapter from '@/json/adapter/getObjectAdapter';
 import getByKeyAdapter from '@/json/adapter/getByKeyAdapter';
 import getByKeyLenientAdapter from '@/json/adapter/getByKeyLenientAdapter';
 import getCustomAdapter from '@/json/adapter/getCustomAdapter';
-import getNullishAwareCustomAdapter from '@/json/adapter/nullish/getNullishAwareCustomAdapter';
+import getNullAwareAdapter from '@/json/adapter/nullish/getNullAwareAdapter';
+import getNullishAwareAdapter from '@/json/adapter/nullish/getNullishAwareAdapter';
+import getUndefinedAwareAdapter from '@/json/adapter/nullish/getUndefinedAwareAdapter';
 
 const JsonAdapters = {
 	identity: getIdentityAdapter,
@@ -25,7 +27,9 @@ const JsonAdapters = {
 	byKey: getByKeyAdapter,
 	byKeyLenient: getByKeyLenientAdapter,
 	custom: getCustomAdapter,
-	nullishAwareCustom: getNullishAwareCustomAdapter
+	nullAware: getNullAwareAdapter,
+	undefinedAware: getUndefinedAwareAdapter,
+	nullishAware: getNullishAwareAdapter
 };
 
 

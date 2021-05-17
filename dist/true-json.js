@@ -1,10 +1,10 @@
 /*!
- * TrueJSON: respectful JSON serialization & deserialization for JavaScript v1.0.0-alpha.2
+ * TrueJSON: respectful JSON serialization & deserialization for JavaScript v1.0.0-alpha.3
  * https://github.com/nestorrente/true-json
  *
  * Released under the MIT License.
  *
- * Build date: 2021-05-16T08:34:45.133Z
+ * Build date: 2021-05-17T11:42:43.926Z
  */
 var TrueJSON;
 /******/ (() => { // webpackBootstrap
@@ -72,8 +72,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _json_adapter_map_getMapAsRecordAdapter__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @/json/adapter/map/getMapAsRecordAdapter */ "./src/main/json/adapter/map/getMapAsRecordAdapter.ts");
 /* harmony import */ var _json_adapter_getObjectAdapter__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @/json/adapter/getObjectAdapter */ "./src/main/json/adapter/getObjectAdapter.ts");
 /* harmony import */ var _json_adapter_getByKeyAdapter__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @/json/adapter/getByKeyAdapter */ "./src/main/json/adapter/getByKeyAdapter.ts");
-/* harmony import */ var _json_adapter_getCustomAdapter__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @/json/adapter/getCustomAdapter */ "./src/main/json/adapter/getCustomAdapter.ts");
-/* harmony import */ var _json_adapter_nullish_getNullishAwareCustomAdapter__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @/json/adapter/nullish/getNullishAwareCustomAdapter */ "./src/main/json/adapter/nullish/getNullishAwareCustomAdapter.ts");
+/* harmony import */ var _json_adapter_getByKeyLenientAdapter__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @/json/adapter/getByKeyLenientAdapter */ "./src/main/json/adapter/getByKeyLenientAdapter.ts");
+/* harmony import */ var _json_adapter_getCustomAdapter__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @/json/adapter/getCustomAdapter */ "./src/main/json/adapter/getCustomAdapter.ts");
+/* harmony import */ var _json_adapter_nullish_getNullAwareAdapter__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! @/json/adapter/nullish/getNullAwareAdapter */ "./src/main/json/adapter/nullish/getNullAwareAdapter.ts");
+/* harmony import */ var _json_adapter_nullish_getNullishAwareAdapter__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! @/json/adapter/nullish/getNullishAwareAdapter */ "./src/main/json/adapter/nullish/getNullishAwareAdapter.ts");
+/* harmony import */ var _json_adapter_nullish_getUndefinedAwareAdapter__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! @/json/adapter/nullish/getUndefinedAwareAdapter */ "./src/main/json/adapter/nullish/getUndefinedAwareAdapter.ts");
+
+
+
 
 
 
@@ -97,8 +103,11 @@ const JsonAdapters = {
     mapAsRecord: _json_adapter_map_getMapAsRecordAdapter__WEBPACK_IMPORTED_MODULE_7__.default,
     object: _json_adapter_getObjectAdapter__WEBPACK_IMPORTED_MODULE_8__.default,
     byKey: _json_adapter_getByKeyAdapter__WEBPACK_IMPORTED_MODULE_9__.default,
-    custom: _json_adapter_getCustomAdapter__WEBPACK_IMPORTED_MODULE_10__.default,
-    nullishAwareCustom: _json_adapter_nullish_getNullishAwareCustomAdapter__WEBPACK_IMPORTED_MODULE_11__.default
+    byKeyLenient: _json_adapter_getByKeyLenientAdapter__WEBPACK_IMPORTED_MODULE_10__.default,
+    custom: _json_adapter_getCustomAdapter__WEBPACK_IMPORTED_MODULE_11__.default,
+    nullAware: _json_adapter_nullish_getNullAwareAdapter__WEBPACK_IMPORTED_MODULE_12__.default,
+    undefinedAware: _json_adapter_nullish_getUndefinedAwareAdapter__WEBPACK_IMPORTED_MODULE_14__.default,
+    nullishAware: _json_adapter_nullish_getNullishAwareAdapter__WEBPACK_IMPORTED_MODULE_13__.default
 };
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (JsonAdapters);
 
@@ -134,17 +143,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ getArrayJsonAdapter)
 /* harmony export */ });
-/* harmony import */ var _json_adapter_nullish_getNullishAwareCustomAdapter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @/json/adapter/nullish/getNullishAwareCustomAdapter */ "./src/main/json/adapter/nullish/getNullishAwareCustomAdapter.ts");
-
 function getArrayJsonAdapter(elementAdapter) {
-    return (0,_json_adapter_nullish_getNullishAwareCustomAdapter__WEBPACK_IMPORTED_MODULE_0__.default)({
+    return {
         adaptToJson(array) {
             return array.map(e => elementAdapter.adaptToJson(e));
         },
         recoverFromJson(jsonArray) {
             return jsonArray.map(e => elementAdapter.recoverFromJson(e));
         }
-    });
+    };
 }
 
 
@@ -160,7 +167,40 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ getByKeyAdapter)
 /* harmony export */ });
-function getByKeyAdapter(keyValuePairs, fallbackKey) {
+// TODO improve types so unknown values are not accepted
+function getByKeyAdapter(keyValuePairs) {
+    return {
+        adaptToJson(value) {
+            const entry = Object.entries(keyValuePairs).find(([, entryValue]) => value === entryValue);
+            if (!entry) {
+                throw new Error('Provided value is not associated with any key');
+            }
+            const [key] = entry;
+            return key;
+        },
+        recoverFromJson(key) {
+            if (key == null || !keyValuePairs.hasOwnProperty(key)) {
+                throw new Error('Provided key is not associated with any value');
+            }
+            return keyValuePairs[key];
+        }
+    };
+}
+
+
+/***/ }),
+
+/***/ "./src/main/json/adapter/getByKeyLenientAdapter.ts":
+/*!*********************************************************!*\
+  !*** ./src/main/json/adapter/getByKeyLenientAdapter.ts ***!
+  \*********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ getByKeyLenientAdapter)
+/* harmony export */ });
+function getByKeyLenientAdapter(keyValuePairs, fallbackKey) {
     return {
         adaptToJson(value) {
             const entry = Object.entries(keyValuePairs).find(([, entryValue]) => value === entryValue);
@@ -215,17 +255,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ getDateTimestampAdapter)
 /* harmony export */ });
-/* harmony import */ var _json_adapter_nullish_getNullishAwareCustomAdapter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @/json/adapter/nullish/getNullishAwareCustomAdapter */ "./src/main/json/adapter/nullish/getNullishAwareCustomAdapter.ts");
-
 function getDateTimestampAdapter() {
-    return (0,_json_adapter_nullish_getNullishAwareCustomAdapter__WEBPACK_IMPORTED_MODULE_0__.default)({
+    return {
         adaptToJson(date) {
             return date.getTime();
         },
         recoverFromJson(timestamp) {
             return new Date(timestamp);
         }
-    });
+    };
 }
 
 
@@ -241,17 +279,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ getISODateAdapter)
 /* harmony export */ });
-/* harmony import */ var _json_adapter_nullish_getNullishAwareCustomAdapter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @/json/adapter/nullish/getNullishAwareCustomAdapter */ "./src/main/json/adapter/nullish/getNullishAwareCustomAdapter.ts");
-
 function getISODateAdapter() {
-    return (0,_json_adapter_nullish_getNullishAwareCustomAdapter__WEBPACK_IMPORTED_MODULE_0__.default)({
+    return {
         adaptToJson(date) {
             return date.toJSON();
         },
         recoverFromJson(isoDateText) {
             return new Date(isoDateText);
         }
-    });
+    };
 }
 
 
@@ -287,11 +323,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ getObjectAdapter)
 /* harmony export */ });
-/* harmony import */ var _json_adapter_nullish_getNullishAwareCustomAdapter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @/json/adapter/nullish/getNullishAwareCustomAdapter */ "./src/main/json/adapter/nullish/getNullishAwareCustomAdapter.ts");
-
 function getObjectAdapter(propertyAdapters, config) {
     const fullConfig = getFullConfig(config);
-    return (0,_json_adapter_nullish_getNullishAwareCustomAdapter__WEBPACK_IMPORTED_MODULE_0__.default)({
+    return {
         adaptToJson(object) {
             const mappedEntries = getObjectEntries(object, propertyAdapters, fullConfig)
                 .map(([key, value]) => {
@@ -308,7 +342,7 @@ function getObjectAdapter(propertyAdapters, config) {
             });
             return Object.fromEntries(mappedEntries);
         }
-    });
+    };
 }
 function getFullConfig(partialConfig) {
     return Object.assign({ omitUnmappedProperties: false, omittedProperties: [] }, partialConfig);
@@ -346,10 +380,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ getRecordAdapter)
 /* harmony export */ });
-/* harmony import */ var _json_adapter_nullish_getNullishAwareCustomAdapter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @/json/adapter/nullish/getNullishAwareCustomAdapter */ "./src/main/json/adapter/nullish/getNullishAwareCustomAdapter.ts");
-
 function getRecordAdapter(valueAdapter) {
-    return (0,_json_adapter_nullish_getNullishAwareCustomAdapter__WEBPACK_IMPORTED_MODULE_0__.default)({
+    return {
         adaptToJson(object) {
             const mappedEntries = Object.entries(object)
                 .map(([key, value]) => {
@@ -364,7 +396,7 @@ function getRecordAdapter(valueAdapter) {
             });
             return Object.fromEntries(mappedEntries);
         }
-    });
+    };
 }
 
 
@@ -382,20 +414,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _json_adapter_getArrayJsonAdapter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @/json/adapter/getArrayJsonAdapter */ "./src/main/json/adapter/getArrayJsonAdapter.ts");
 /* harmony import */ var _json_adapter_getIdentityAdapter__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @/json/adapter/getIdentityAdapter */ "./src/main/json/adapter/getIdentityAdapter.ts");
-/* harmony import */ var _json_adapter_nullish_getNullishAwareCustomAdapter__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @/json/adapter/nullish/getNullishAwareCustomAdapter */ "./src/main/json/adapter/nullish/getNullishAwareCustomAdapter.ts");
-
 
 
 function getSetAdapter(elementAdapter = (0,_json_adapter_getIdentityAdapter__WEBPACK_IMPORTED_MODULE_1__.default)()) {
     const arrayAdapter = (0,_json_adapter_getArrayJsonAdapter__WEBPACK_IMPORTED_MODULE_0__.default)(elementAdapter);
-    return (0,_json_adapter_nullish_getNullishAwareCustomAdapter__WEBPACK_IMPORTED_MODULE_2__.default)({
+    return {
         adaptToJson(set) {
             return arrayAdapter.adaptToJson([...set]);
         },
         recoverFromJson(jsonArray) {
             return new Set(arrayAdapter.recoverFromJson(jsonArray));
         }
-    });
+    };
 }
 
 
@@ -413,8 +443,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _json_adapter_getArrayJsonAdapter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @/json/adapter/getArrayJsonAdapter */ "./src/main/json/adapter/getArrayJsonAdapter.ts");
 /* harmony import */ var _json_adapter_getIdentityAdapter__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @/json/adapter/getIdentityAdapter */ "./src/main/json/adapter/getIdentityAdapter.ts");
-/* harmony import */ var _json_adapter_nullish_getNullishAwareCustomAdapter__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @/json/adapter/nullish/getNullishAwareCustomAdapter */ "./src/main/json/adapter/nullish/getNullishAwareCustomAdapter.ts");
-
 
 
 function getMapAsEntriesAdapter(config) {
@@ -437,14 +465,14 @@ function getMapAsEntriesAdapter(config) {
             ];
         }
     });
-    return (0,_json_adapter_nullish_getNullishAwareCustomAdapter__WEBPACK_IMPORTED_MODULE_2__.default)({
+    return {
         adaptToJson(map) {
             return entryAdapter.adaptToJson([...map]);
         },
         recoverFromJson(jsonArray) {
             return new Map(entryAdapter.recoverFromJson(jsonArray));
         }
-    });
+    };
 }
 
 
@@ -461,12 +489,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (/* binding */ getMapAsRecordAdapter)
 /* harmony export */ });
 /* harmony import */ var _json_adapter_map_getMapAsEntriesAdapter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @/json/adapter/map/getMapAsEntriesAdapter */ "./src/main/json/adapter/map/getMapAsEntriesAdapter.ts");
-/* harmony import */ var _json_adapter_nullish_getNullishAwareCustomAdapter__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @/json/adapter/nullish/getNullishAwareCustomAdapter */ "./src/main/json/adapter/nullish/getNullishAwareCustomAdapter.ts");
-
 
 function getMapAsRecordAdapter(config) {
     const mapAsEntriesAdapter = (0,_json_adapter_map_getMapAsEntriesAdapter__WEBPACK_IMPORTED_MODULE_0__.default)(config);
-    return (0,_json_adapter_nullish_getNullishAwareCustomAdapter__WEBPACK_IMPORTED_MODULE_1__.default)({
+    return {
         adaptToJson(map) {
             const adaptedEntries = mapAsEntriesAdapter.adaptToJson(map);
             return Object.fromEntries(adaptedEntries);
@@ -475,35 +501,113 @@ function getMapAsRecordAdapter(config) {
             const entries = Object.entries(jsonObject);
             return mapAsEntriesAdapter.recoverFromJson(entries);
         }
-    });
+    };
 }
 
 
 /***/ }),
 
-/***/ "./src/main/json/adapter/nullish/getNullishAwareCustomAdapter.ts":
-/*!***********************************************************************!*\
-  !*** ./src/main/json/adapter/nullish/getNullishAwareCustomAdapter.ts ***!
-  \***********************************************************************/
+/***/ "./src/main/json/adapter/nullish/getNullAwareAdapter.ts":
+/*!**************************************************************!*\
+  !*** ./src/main/json/adapter/nullish/getNullAwareAdapter.ts ***!
+  \**************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (/* binding */ getNullishAwareCustomAdapter)
+/* harmony export */   "default": () => (/* binding */ getNullAwareAdapter)
 /* harmony export */ });
-function getNullishAwareCustomAdapter(adapter) {
+function getNullAwareAdapter(adapter) {
     return {
         adaptToJson(value) {
-            if (value == null) {
-                return value;
+            if (value === null) {
+                return null;
             }
-            return adapter.adaptToJson(value);
+            else {
+                return adapter.adaptToJson(value);
+            }
         },
         recoverFromJson(value) {
-            if (value == null) {
-                return value;
+            if (value === null) {
+                return null;
             }
-            return adapter.recoverFromJson(value);
+            else {
+                return adapter.recoverFromJson(value);
+            }
+        }
+    };
+}
+
+
+/***/ }),
+
+/***/ "./src/main/json/adapter/nullish/getNullishAwareAdapter.ts":
+/*!*****************************************************************!*\
+  !*** ./src/main/json/adapter/nullish/getNullishAwareAdapter.ts ***!
+  \*****************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ getNullishAwareAdapter)
+/* harmony export */ });
+function getNullishAwareAdapter(adapter) {
+    return {
+        adaptToJson(value) {
+            if (value === null) {
+                return null;
+            }
+            else if (value === undefined) {
+                return undefined;
+            }
+            else {
+                return adapter.adaptToJson(value);
+            }
+        },
+        recoverFromJson(value) {
+            if (value === null) {
+                return null;
+            }
+            else if (value === undefined) {
+                return undefined;
+            }
+            else {
+                return adapter.recoverFromJson(value);
+            }
+        }
+    };
+}
+
+
+/***/ }),
+
+/***/ "./src/main/json/adapter/nullish/getUndefinedAwareAdapter.ts":
+/*!*******************************************************************!*\
+  !*** ./src/main/json/adapter/nullish/getUndefinedAwareAdapter.ts ***!
+  \*******************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ getUndefinedAwareAdapter)
+/* harmony export */ });
+function getUndefinedAwareAdapter(adapter) {
+    return {
+        adaptToJson(value) {
+            if (value === undefined) {
+                return undefined;
+            }
+            else {
+                return adapter.adaptToJson(value);
+            }
+        },
+        recoverFromJson(value) {
+            if (value === undefined) {
+                return undefined;
+            }
+            else {
+                return adapter.recoverFromJson(value);
+            }
         }
     };
 }
