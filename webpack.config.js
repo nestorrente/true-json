@@ -2,9 +2,12 @@ const webpack = require('webpack');
 const path = require('path');
 const packageJson = require('./package.json');
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
+const TerserPlugin = require("terser-webpack-plugin");
 
 const BUNDLE_HEADER = `
-${packageJson.description} v${packageJson.version}
+${packageJson.description}
+v${packageJson.version}
+
 ${packageJson.homepage}
 
 Released under the MIT License.
@@ -14,8 +17,11 @@ Build date: ${new Date().toISOString()}
 
 const commonConfig = {
     devtool: 'source-map',
-    mode: 'development',
-    // mode: 'production',
+    // mode: 'development',
+    mode: 'production',
+    optimization: {
+        minimizer: [new TerserPlugin({extractComments: false})]
+    },
     module: {
         rules: [
             {

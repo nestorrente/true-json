@@ -89,6 +89,7 @@ describe('Unknown values with default value', () => {
 
 		const input = undefined;
 
+		// @ts-expect-error
 		const result = knownAnimalsByKeyAdapter.recoverFromJson(input);
 
 		expect(result).toBe(KnownAnimals.BIRD);
