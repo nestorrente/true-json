@@ -33,7 +33,8 @@
     + [mapAsEntries(\[config\])](#mapasentriesconfig)
     + [mapAsRecord(\[config\])](#mapasrecordconfig)
     + [object(propertyAdapters\[, config\])](#objectpropertyadapters-config)
-    + [byKey(keyValuePairs\[, fallbackKey\])](#bykeykeyvaluepairs-fallbackkey)
+    + [byKey(keyValuePairs)](#bykeykeyvaluepairs)
+    + [byKeyLenient(keyValuePairs\[, fallbackKey\])](#bykeykeylenientvaluepairs-fallbackkey)
     + [Handling nullish values](#handling-nullish-values)
         + [nullishAware(adapter)](#nullishawareadapter)
         + [nullAware(adapter)](#nullawareadapter)
@@ -644,7 +645,7 @@ Output:
 }
 ```
 
-### byKey(keyValuePairs\[, fallbackKey])
+### byKey(keyValuePairs)
 
 This adapter allows you to serialize a value using its corresponding key of the provided key-value pairs object. This is
 specially useful when working with enumerated values:
@@ -671,9 +672,15 @@ Output:
 SmoothScalingStrategy { }
 ```
 
-If any unknown value&ast; is passed to `adaptToJson()` or `recoverFromJson()` methods, `undefined` is returned:
+If any unknown value&ast; is passed to `adaptToJson()` or `recoverFromJson()` methods, an error is thrown. If you don't
+want this to happen, you can use
+[`byKeyLenient(keyValuePairs\[, fallbackKey\])`](#bykeylenientkeyvaluepairs-fallbackkey) method.
 
-<small>&ast; this includes `null` and `undefined` values if they are not present in the key-value pairs object.</small>
+### byKeyLenient(keyValuePairs\[, fallbackKey])
+
+This is very similar to [`byKey(keyValuePairs)`](#bykeykeyvaluepairs)'s adapter. The main difference is the case where
+the passed value is not present in the `keyValuePairs` object. While [`byKey(keyValuePairs)`](#bykeykeyvaluepairs)'s
+adapter will throw an error, this adapter will return `undefined`:
 
 ```javascript
 const ScalingStrategies = {
@@ -682,7 +689,7 @@ const ScalingStrategies = {
     SMOOTH: new SmoothScalingStrategy()
 };
 
-const adapter = JsonAdapters.byKey(ScalingStrategies);
+const adapter = JsonAdapters.byKeyLenient(ScalingStrategies);
 
 console.log(adapter.adaptToJson(new UnknownScalingStrategy()));
 
@@ -697,7 +704,7 @@ undefined
 undefined
 ```
 
-You can also specify a fallback key to use in those cases:
+Alternatively, you can pass a fallback key to use in those cases:
 
 ```javascript
 const ScalingStrategies = {
@@ -706,7 +713,7 @@ const ScalingStrategies = {
     SMOOTH: new SmoothScalingStrategy()
 };
 
-const adapter = JsonAdapters.byKey(ScalingStrategies, 'DEFAULT');
+const adapter = JsonAdapters.byKeyLenient(ScalingStrategies, 'DEFAULT');
 
 console.log(adapter.adaptToJson(new UnknownScalingStrategy()));
 
