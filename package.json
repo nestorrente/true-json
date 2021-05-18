@@ -10,7 +10,16 @@
         "build": "webpack && node scripts/bundle-ts-declaration-files.js",
         "lint": "eslint -c .eslintrc.js"
     },
-    "keywords": [],
+    "keywords": [
+        "json",
+        "converter",
+        "parser",
+        "serialization",
+        "type",
+        "typed",
+        "typescript",
+        "javascript"
+    ],
     "author": "Néstor Pérez González",
     "license": "MIT",
     "homepage": "https://github.com/nestorrente/true-json",
