@@ -18,11 +18,12 @@
     + [What's wrong with `JSON.stringify()` and `JSON.parse()`?](#whats-wrong-with-jsonstringify-and-jsonparse)
     + [TrueJSON to the rescue](#truejson-to-the-rescue)
 * [Installation](#installation)
-    + [Using NPM](#using-npm)
-    + [Using `<script>` tag](#using-script-tag)
-* [Usage](#usage)
-    + [Using `import`](#using-import)
-    + [Using `TrueJSON` object](#using-truejson-object)
+    + [Using NPM (module)](#using-npm-module)
+    + [Using `<script>` tag (standalone)](#using-script-tag-standalone)
+* [Basic usage](#basic-usage)
+    + [Using `import` (module)](#using-import-module)
+    + [Using `TrueJSON` object (standalone)](#using-truejson-object-standalone)
+* [Using JSON5 and other JSON alternatives](#using-json5-or-other-json-alternatives)
 * [Built-in adapters](#built-in-adapters)
     + [identity()](#identity)
     + [isoDate()](#isodate)
@@ -126,7 +127,7 @@ As you can see, both the `date` property and the `set` property have been deseri
 
 ## Installation
 
-### Using NPM
+### Using NPM \(module\)
 
 Install the latest stable version:
 
@@ -140,7 +141,7 @@ Then you can import TrueJSON objects in your modules:
 import {JsonConverter, JsonAdapters} from 'true-json';
 ```
 
-### Using `<script>` tag
+### Using `<script>` tag \(standalone\)
 
 You can [download the latest version from here](dist/true-json.js). Then, you can use it as any other JavaScript file:
 
@@ -152,17 +153,17 @@ Or, if you prefer, you can use any of the following CDN repositories:
 
 ```html
 <!-- Unpkg -->
-<script src="https://unpkg.com/true-json@1.0.0-alpha.4"></script>
+<script src="https://unpkg.com/true-json@1.0.0-alpha.5"></script>
 
 <!-- JsDelivr -->
-<script src="https://cdn.jsdelivr.net/npm/true-json@1.0.0-alpha.4"></script>
+<script src="https://cdn.jsdelivr.net/npm/true-json@1.0.0-alpha.5"></script>
 ```
 
 The script will create a global `TrueJSON` object, which contains all the exported objects.
 
-## Usage
+## Basic usage
 
-### Using `import`
+### Using `import` \(module\)
 
 ```javascript
 import {JsonConverter, JsonAdapters} from 'true-json';
@@ -187,15 +188,29 @@ const userAsJson = userJsonConverter.stringify(user);
 console.log(userAsJson);
 ```
 
-### Using `TrueJSON` object
+### Using `TrueJSON` object \(standalone\)
 
 You can access any object just by doing `TrueJSON.[ObjectName]`:
 
 ```javascript
+const user = {
+  name: 'John Doe',
+  birthDate: new Date('1970-01-01'),
+  bestScoreByGame: new Map([
+    ['Minesweeper', 118],
+    ['Donkey Kong', 35500],
+    ['Super Mario Bros.', 183250],
+  ])
+};
+
 const userJsonConverter = new TrueJSON.JsonConverter(TrueJSON.JsonAdapters.object({
-    birthDate: TrueJSON.JsonAdapters.isoDate(),
-    bestScoreByGame: TrueJSON.JsonAdapters.mapAsRecord()
+  birthDate: TrueJSON.JsonAdapters.isoDate(),
+  bestScoreByGame: TrueJSON.JsonAdapters.mapAsRecord()
 }));
+
+const userAsJson = userJsonConverter.stringify(user);
+
+console.log(userAsJson);
 ```
 
 You can also use ES6 _destructuring assignment_ in order to imitate module imports:
@@ -203,10 +218,60 @@ You can also use ES6 _destructuring assignment_ in order to imitate module impor
 ```javascript
 const {JsonConverter, JsonAdapters} = TrueJSON;
 
+const user = {
+  name: 'John Doe',
+  birthDate: new Date('1970-01-01'),
+  bestScoreByGame: new Map([
+    ['Minesweeper', 118],
+    ['Donkey Kong', 35500],
+    ['Super Mario Bros.', 183250],
+  ])
+};
+
 const userJsonConverter = new JsonConverter(JsonAdapters.object({
-    birthDate: JsonAdapters.isoDate(),
-    bestScoreByGame: JsonAdapters.mapAsRecord()
+  birthDate: JsonAdapters.isoDate(),
+  bestScoreByGame: JsonAdapters.mapAsRecord()
 }));
+
+const userAsJson = userJsonConverter.stringify(user);
+
+console.log(userAsJson);
+```
+
+## Using JSON5 or other JSON alternatives
+
+You can configure TrueJSON's `JsonConverter` to use any custom JSON implementation, such as JSON5. The only requirement
+is that the custom JSON implementation should have the same `parse()` and `stringify()` methods as the standard one.
+
+Let's see an example using [`json5`'s NPM package](https://www.npmjs.com/package/json5):
+
+```javascript
+import json5 from 'json5';
+import {JsonConverter, JsonAdapters} from 'true-json';
+
+const user = {
+  name: 'John Doe',
+  birthDate: new Date('1970-01-01'),
+  bestScoreByGame: new Map([
+    ['Minesweeper', 118],
+    ['Donkey Kong', 35500],
+    ['Super Mario Bros.', 183250],
+  ])
+};
+
+const userJsonAdapter = JsonAdapters.object({
+  birthDate: JsonAdapters.isoDate(),
+  bestScoreByGame: JsonAdapters.mapAsRecord()
+});
+
+// The second argument of JsonConverter's constructor
+// allows you to pass a custom JSON implementation.
+// When no value is passed, the standard JSON object is used.
+const userJsonConverter = new JsonConverter(userJsonAdapter, json5);
+
+const userAsJson = userJsonConverter.stringify(user);
+
+console.log(userAsJson);
 ```
 
 ## Built-in adapters
