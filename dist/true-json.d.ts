@@ -10,9 +10,13 @@ export interface JsonAdapter<T, U extends JsonValue = JsonValue> {
 	adaptToJson(value: T): U;
 	recoverFromJson(value: U): T;
 }
+export interface CustomJSON {
+	parse: JSON["parse"];
+	stringify: JSON["stringify"];
+}
 export declare class JsonConverter<T> {
 	#private;
-	constructor(adapter: JsonAdapter<T, any>);
+	constructor(adapter: JsonAdapter<T, any>, json?: CustomJSON);
 	stringify(value: T, space?: string | number): string;
 	parse(text: string): T;
 }
