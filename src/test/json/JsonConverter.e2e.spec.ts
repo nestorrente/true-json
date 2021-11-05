@@ -92,10 +92,14 @@ const testObjectJson = `{
     "nullableBoolean": null
 }`;
 
-const booleanToStringAdapter = JsonAdapters.custom<boolean, string>(
-		value => value ? 'yes' : 'no',
-		value => value === 'yes'
-);
+const booleanToStringAdapter = JsonAdapters.custom<boolean, string>({
+	adaptToJson(value: boolean): string {
+		return value ? 'yes' : 'no';
+	},
+	recoverFromJson(value: string): boolean {
+		return value === 'yes';
+	}
+});
 
 const converter = new JsonConverter(JsonAdapters.object<TestObject>({
 	roundScoreByPlayer: JsonAdapters.mapAsEntries({

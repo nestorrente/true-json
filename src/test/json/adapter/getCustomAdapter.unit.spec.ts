@@ -1,9 +1,13 @@
 import getCustomAdapter from '@/json/adapter/getCustomAdapter';
 
-const customAdapter = getCustomAdapter<boolean, string>(
-		value => value ? 'yes' : 'no',
-		value => value === 'yes'
-);
+const customAdapter = getCustomAdapter<boolean, string>({
+	adaptToJson(value: boolean): string {
+		return value ? 'yes' : 'no';
+	},
+	recoverFromJson(value: string): boolean {
+		return value === 'yes';
+	}
+});
 
 const testValues: [boolean, string][] = [
 	[true, 'yes'],

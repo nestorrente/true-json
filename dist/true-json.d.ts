@@ -50,7 +50,7 @@ export declare type StringKeyOf<T> = string & keyof T;
 declare function getByKeyAdapter<T, R extends Record<string, T>>(keyValuePairs: R): JsonAdapter<T, StringKeyOf<R>>;
 declare function getByKeyLenientAdapter<T, R extends Record<string, T>>(keyValuePairs: R): JsonAdapter<T | undefined, StringKeyOf<R> | undefined>;
 declare function getByKeyLenientAdapter<T, R extends Record<string, T>>(keyValuePairs: R, fallbackKey: StringKeyOf<R>): JsonAdapter<T, StringKeyOf<R>>;
-declare function getCustomAdapter<T, U extends JsonValue = JsonValue>(adaptToJsonCallback: JsonAdapter<T, U>["adaptToJson"], recoverFromJsonCallback: JsonAdapter<T, U>["recoverFromJson"]): JsonAdapter<T, U>;
+declare function getCustomAdapter<T, U extends JsonValue = JsonValue>(adapter: JsonAdapter<T, U>): JsonAdapter<T, U>;
 declare function getNullishAwareCustomAdapter<T, U extends JsonValue = JsonValue>(adapter: JsonAdapter<T, U>): JsonAdapter<T | null | undefined, U | null | undefined>;
 declare function getUndefinedAwareCustomAdapter<T, U extends JsonValue = JsonValue>(adapter: JsonAdapter<T, U>): JsonAdapter<T | undefined, U | undefined>;
 declare function getNullAwareCustomAdapter<T, U extends JsonValue = JsonValue>(adapter: JsonAdapter<T, U>): JsonAdapter<T | null, U | null>;
