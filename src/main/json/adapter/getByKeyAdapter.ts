@@ -21,7 +21,7 @@ export default function getByKeyAdapter<T, R extends Record<string, T>>(
 		},
 		recoverFromJson(key) {
 
-			if (key == null || !(key in keyValuePairs)) {
+			if (key == null || !keyValuePairs.hasOwnProperty(key)) {
 				throw new Error('Provided key is not associated with any value');
 			}
 

@@ -1,7 +1,7 @@
 {
     "name": "true-json",
     "description": "TrueJSON: respectful JSON serialization & deserialization for JavaScript",
-    "version": "1.0.0-alpha.3",
+    "version": "1.0.0-alpha.5",
     "main": "dist/true-json.umd.js",
     "module": "dist/true-json.umd.js",
     "types": "dist/true-json.d.ts",
@@ -10,7 +10,16 @@
         "build": "webpack && node scripts/bundle-ts-declaration-files.js",
         "lint": "eslint -c .eslintrc.js"
     },
-    "keywords": [],
+    "keywords": [
+        "json",
+        "converter",
+        "parser",
+        "serialization",
+        "type",
+        "typed",
+        "typescript",
+        "javascript"
+    ],
     "author": "Néstor Pérez González",
     "license": "MIT",
     "homepage": "https://github.com/nestorrente/true-json",
@@ -29,6 +38,7 @@
         "jest": "^26.6.3",
         "jest-coverage-badges": "^1.1.2",
         "jest-webpack-resolver": "^0.3.0",
+        "json5": "^2.2.0",
         "ts-jest": "^26.5.4",
         "ts-loader": "^9.1.2",
         "tsconfig-paths-webpack-plugin": "^3.3.0",

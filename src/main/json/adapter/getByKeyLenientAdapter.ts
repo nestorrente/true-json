@@ -1,10 +1,9 @@
 import {StringKeyOf} from '@/json/adapter/types';
 import JsonAdapter from '@/json/adapter/JsonAdapter';
 
-export default function getByKeyLenientAdapter<T, R extends Record<string, T>>(
-		keyValuePairs: R,
-		fallbackKey?: StringKeyOf<R>
-): JsonAdapter<T | undefined, StringKeyOf<R> | undefined> {
+export default function getByKeyLenientAdapter<T, R extends Record<string, T>>(keyValuePairs: R): JsonAdapter<T | undefined, StringKeyOf<R> | undefined>;
+export default function getByKeyLenientAdapter<T, R extends Record<string, T>>(keyValuePairs: R, fallbackKey: StringKeyOf<R>): JsonAdapter<T, StringKeyOf<R>>;
+export default function getByKeyLenientAdapter<T, R extends Record<string, T>>(keyValuePairs: R, fallbackKey?: StringKeyOf<R>): JsonAdapter<T | undefined, StringKeyOf<R> | undefined> {
 	return {
 		adaptToJson(value) {
 

@@ -1,5 +1,6 @@
 import JsonAdapters from '@/json/adapter/JsonAdapters';
 import JsonConverter from '@/json/JsonConverter';
+import json5 from 'json5';
 
 // TODO add cases for other adapters
 interface TestObject {
@@ -133,5 +134,34 @@ describe('Complex object', () => {
 		delete testObjectWithoutUndefinedField.undefinedField;
 		return testObjectWithoutUndefinedField;
 	}
+
+});
+
+describe('JSON5 converter', () => {
+
+	const map = new Map([
+		['one', 1],
+		['two', 2]
+	]);
+
+	const json5Text = '{one:1,two:2}';
+
+	const json5Converter = new JsonConverter(JsonAdapters.mapAsRecord(), json5);
+
+	test('Stringify', () => {
+
+		const result = json5Converter.stringify(map);
+
+		expect(result).toBe(json5Text);
+
+	});
+
+	test('Parse', () => {
+
+		const result = json5Converter.parse(json5Text);
+
+		expect(result).toStrictEqual(map);
+
+	});
 
 });
