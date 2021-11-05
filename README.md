@@ -15,31 +15,31 @@
 ## Table of contents
 
 * [What's TrueJSON?](#whats-truejson)
-    + [What's wrong with `JSON.stringify()` and `JSON.parse()`?](#whats-wrong-with-jsonstringify-and-jsonparse)
-    + [TrueJSON to the rescue](#truejson-to-the-rescue)
+	+ [What's wrong with `JSON.stringify()` and `JSON.parse()`?](#whats-wrong-with-jsonstringify-and-jsonparse)
+	+ [TrueJSON to the rescue](#truejson-to-the-rescue)
 * [Installation](#installation)
-    + [Using NPM (module)](#using-npm-module)
-    + [Using `<script>` tag (standalone)](#using-script-tag-standalone)
+	+ [Using NPM (module)](#using-npm-module)
+	+ [Using `<script>` tag (standalone)](#using-script-tag-standalone)
 * [Basic usage](#basic-usage)
-    + [Using `import` (module)](#using-import-module)
-    + [Using `TrueJSON` object (standalone)](#using-truejson-object-standalone)
+	+ [Using `import` (module)](#using-import-module)
+	+ [Using `TrueJSON` object (standalone)](#using-truejson-object-standalone)
 * [Using JSON5 and other JSON alternatives](#using-json5-or-other-json-alternatives)
 * [Built-in adapters](#built-in-adapters)
-    + [identity()](#identity)
-    + [isoDate()](#isodate)
-    + [dateTimestamp()](#datetimestamp)
-    + [array(elementAdapter)](#arrayelementadapter)
-    + [set(\[elementAdapter\])](#setelementadapter)
-    + [record(valueAdapter)](#recordvalueadapter)
-    + [mapAsEntries(\[config\])](#mapasentriesconfig)
-    + [mapAsRecord(\[config\])](#mapasrecordconfig)
-    + [object(propertyAdapters\[, config\])](#objectpropertyadapters-config)
-    + [byKey(keyValuePairs)](#bykeykeyvaluepairs)
-    + [byKeyLenient(keyValuePairs\[, fallbackKey\])](#bykeykeylenientvaluepairs-fallbackkey)
-    + [Handling nullish values](#handling-nullish-values)
-        + [nullishAware(adapter)](#nullishawareadapter)
-        + [nullAware(adapter)](#nullawareadapter)
-        + [undefinedAware(adapter)](#undefinedawareadapter)
+	+ [identity()](#identity)
+	+ [isoDate()](#isodate)
+	+ [dateTimestamp()](#datetimestamp)
+	+ [array(elementAdapter)](#arrayelementadapter)
+	+ [set(\[elementAdapter\])](#setelementadapter)
+	+ [record(valueAdapter)](#recordvalueadapter)
+	+ [mapAsEntries(\[config\])](#mapasentriesconfig)
+	+ [mapAsRecord(\[config\])](#mapasrecordconfig)
+	+ [object(propertyAdapters\[, config\])](#objectpropertyadapters-config)
+	+ [byKey(keyValuePairs)](#bykeykeyvaluepairs)
+	+ [byKeyLenient(keyValuePairs\[, fallbackKey\])](#bykeykeylenientvaluepairs-fallbackkey)
+	+ [Handling nullish values](#handling-nullish-values)
+		+ [nullishAware(adapter)](#nullishawareadapter)
+		+ [nullAware(adapter)](#nullawareadapter)
+		+ [undefinedAware(adapter)](#undefinedawareadapter)
 * [Writing your own adapter](#writing-your-own-adapter)
 * [Contributing](#contributing)
 
@@ -67,8 +67,8 @@ If you see the value of the `jsonText` variable, you'll get the following JSON s
 
 ```json
 {
-    "date": "1970-01-01T00:00:00.000Z",
-    "set": {}
+	"date": "1970-01-01T00:00:00.000Z",
+	"set": {}
 }
 ```
 
@@ -77,8 +77,7 @@ As you can see, your set elements haven't been serialized as you would expect. M
 
 ![Deserialized object using native JSON (Google Chrome console)](docs/img/deserialized-object-native.png "Deserialized object using native JSON (Google Chrome console)")
 
-Now the `date` property is a `string`, and the `set` property is an empty object, which, probably, isn't the desired
-behaviour.
+Now the `date` property is a `string`, and the `set` property is an empty object, which, probably, isn't the desired behaviour.
 
 ### TrueJSON to the rescue
 
@@ -109,12 +108,12 @@ If you see the value of the `jsonText` variable, now you'll get the following JS
 
 ```json
 {
-    "date": "1970-01-01T00:00:00.000Z",
-    "set": [
-        1,
-        2,
-        3
-    ]
+	"date": "1970-01-01T00:00:00.000Z",
+	"set": [
+		1,
+		2,
+		3
+	]
 }
 ```
 
@@ -146,6 +145,7 @@ import {JsonConverter, JsonAdapters} from 'true-json';
 You can [download the latest version from here](dist/true-json.js). Then, you can use it as any other JavaScript file:
 
 ```html
+
 <script src="true-json.js"></script>
 ```
 
@@ -153,10 +153,10 @@ Or, if you prefer, you can use any of the following CDN repositories:
 
 ```html
 <!-- Unpkg -->
-<script src="https://unpkg.com/true-json@1.0.0-alpha.5"></script>
+<script src="https://unpkg.com/true-json@1.0.0"></script>
 
 <!-- JsDelivr -->
-<script src="https://cdn.jsdelivr.net/npm/true-json@1.0.0-alpha.5"></script>
+<script src="https://cdn.jsdelivr.net/npm/true-json@1.0.0"></script>
 ```
 
 The script will create a global `TrueJSON` object, which contains all the exported objects.
@@ -194,18 +194,18 @@ You can access any object just by doing `TrueJSON.[ObjectName]`:
 
 ```javascript
 const user = {
-  name: 'John Doe',
-  birthDate: new Date('1970-01-01'),
-  bestScoreByGame: new Map([
-    ['Minesweeper', 118],
-    ['Donkey Kong', 35500],
-    ['Super Mario Bros.', 183250],
-  ])
+    name: 'John Doe',
+    birthDate: new Date('1970-01-01'),
+    bestScoreByGame: new Map([
+        ['Minesweeper', 118],
+        ['Donkey Kong', 35500],
+        ['Super Mario Bros.', 183250],
+    ])
 };
 
 const userJsonConverter = new TrueJSON.JsonConverter(TrueJSON.JsonAdapters.object({
-  birthDate: TrueJSON.JsonAdapters.isoDate(),
-  bestScoreByGame: TrueJSON.JsonAdapters.mapAsRecord()
+    birthDate: TrueJSON.JsonAdapters.isoDate(),
+    bestScoreByGame: TrueJSON.JsonAdapters.mapAsRecord()
 }));
 
 const userAsJson = userJsonConverter.stringify(user);
@@ -219,18 +219,18 @@ You can also use ES6 _destructuring assignment_ in order to imitate module impor
 const {JsonConverter, JsonAdapters} = TrueJSON;
 
 const user = {
-  name: 'John Doe',
-  birthDate: new Date('1970-01-01'),
-  bestScoreByGame: new Map([
-    ['Minesweeper', 118],
-    ['Donkey Kong', 35500],
-    ['Super Mario Bros.', 183250],
-  ])
+    name: 'John Doe',
+    birthDate: new Date('1970-01-01'),
+    bestScoreByGame: new Map([
+        ['Minesweeper', 118],
+        ['Donkey Kong', 35500],
+        ['Super Mario Bros.', 183250],
+    ])
 };
 
 const userJsonConverter = new JsonConverter(JsonAdapters.object({
-  birthDate: JsonAdapters.isoDate(),
-  bestScoreByGame: JsonAdapters.mapAsRecord()
+    birthDate: JsonAdapters.isoDate(),
+    bestScoreByGame: JsonAdapters.mapAsRecord()
 }));
 
 const userAsJson = userJsonConverter.stringify(user);
@@ -240,8 +240,8 @@ console.log(userAsJson);
 
 ## Using JSON5 or other JSON alternatives
 
-You can configure TrueJSON's `JsonConverter` to use any custom JSON implementation, such as JSON5. The only requirement
-is that the custom JSON implementation should have the same `parse()` and `stringify()` methods as the standard one.
+You can configure TrueJSON's `JsonConverter` to use any custom JSON implementation, such as JSON5. The only requirement is that
+the custom JSON implementation should have the same `parse()` and `stringify()` methods as the standard one.
 
 Let's see an example using [`json5`'s NPM package](https://www.npmjs.com/package/json5):
 
@@ -250,18 +250,18 @@ import json5 from 'json5';
 import {JsonConverter, JsonAdapters} from 'true-json';
 
 const user = {
-  name: 'John Doe',
-  birthDate: new Date('1970-01-01'),
-  bestScoreByGame: new Map([
-    ['Minesweeper', 118],
-    ['Donkey Kong', 35500],
-    ['Super Mario Bros.', 183250],
-  ])
+    name: 'John Doe',
+    birthDate: new Date('1970-01-01'),
+    bestScoreByGame: new Map([
+        ['Minesweeper', 118],
+        ['Donkey Kong', 35500],
+        ['Super Mario Bros.', 183250],
+    ])
 };
 
 const userJsonAdapter = JsonAdapters.object({
-  birthDate: JsonAdapters.isoDate(),
-  bestScoreByGame: JsonAdapters.mapAsRecord()
+    birthDate: JsonAdapters.isoDate(),
+    bestScoreByGame: JsonAdapters.mapAsRecord()
 });
 
 // The second argument of JsonConverter's constructor
@@ -373,8 +373,8 @@ Output:
 
 ### set(\[elementAdapter])
 
-By default, JavaScript sets are serialized as an empty object. Using this adapter allows you to serialize them in the
-same way that arrays are serialized:
+By default, JavaScript sets are serialized as an empty object. Using this adapter allows you to serialize them in the same way
+that arrays are serialized:
 
 ```javascript
 const adapter = JsonAdapters.set();
@@ -424,8 +424,7 @@ _hashtable_ or _dictionary_ in other programming languages), but its keys are al
 <small>&ast; JavaScript allows to use the `symbol` type as a key also, but TrueJSON expects records to be in the form
 `{ string: any }` (for TypeScript users: `Record<string, any>`).</small>
 
-The record adapter receives an adapter that will be applied to each of the record values, just as the array adapter
-does:
+The record adapter receives an adapter that will be applied to each of the record values, just as the array adapter does:
 
 ```javascript
 const adapter = JsonAdapters.record(JsonAdapters.dateTimestamp());
@@ -457,8 +456,8 @@ Output:
 
 ### mapAsEntries(\[config])
 
-By default, JavaScript maps are serialized as an empty object. Using this adapter allows you to serialize them as an
-array of entries (see
+By default, JavaScript maps are serialized as an empty object. Using this adapter allows you to serialize them as an array of
+entries (see
 [Map.prototype.entries()](https://developer.mozilla.org/es/docs/Web/JavaScript/Reference/Global_Objects/Map/entries)):
 
 ```javascript
@@ -539,8 +538,8 @@ JsonAdapters.mapAsEntries({
 
 ### mapAsRecord(\[config])
 
-By default, JavaScript maps are serialized as an empty object. Using this adapter allows you to serialize them as a
-plain JS object (a.k.a. record):
+By default, JavaScript maps are serialized as an empty object. Using this adapter allows you to serialize them as a plain JS
+object (a.k.a. record):
 
 ```javascript
 const map = new Map();
@@ -620,8 +619,8 @@ JsonAdapters.mapAsRecord({
 
 ### object(propertyAdapters\[, config])
 
-This adapter allows you to serialize &amp; deserialize any plain JS object, specifying different adapters for each of
-its properties:
+This adapter allows you to serialize &amp; deserialize any plain JS object, specifying different adapters for each of its
+properties:
 
 ```javascript
 const film = {
@@ -675,24 +674,24 @@ Example using `omittedProperties` option:
 
 ```javascript
 const adapter = JsonAdapters.object(
-    {
-        birthDate: JsonAdapters.dateTimestamp()
-    },
-    {
-        omittedProperties: ['age']
-    }
+        {
+            birthDate: JsonAdapters.dateTimestamp()
+        },
+        {
+            omittedProperties: ['age']
+        }
 );
 
 console.log(adapter.adaptToJson({
-  name: 'John Doe',
-  birthDate: new Date('1970-01-01'),
-  age: 51
+    name: 'John Doe',
+    birthDate: new Date('1970-01-01'),
+    age: 51
 }));
 
 console.log(adapter.recoverFromJson({
-  name: 'John Doe',
-  birthDate: 0,
-  age: 51
+    name: 'John Doe',
+    birthDate: 0,
+    age: 51
 }));
 ```
 
@@ -737,15 +736,15 @@ Output:
 SmoothScalingStrategy { }
 ```
 
-If any unknown value&ast; is passed to `adaptToJson()` or `recoverFromJson()` methods, an error is thrown. If you don't
-want this to happen, you can use
+If any unknown value&ast; is passed to `adaptToJson()` or `recoverFromJson()` methods, an error is thrown. If you don't want
+this to happen, you can use
 [`byKeyLenient(keyValuePairs\[, fallbackKey\])`](#bykeylenientkeyvaluepairs-fallbackkey) method.
 
 ### byKeyLenient(keyValuePairs\[, fallbackKey])
 
-This is very similar to [`byKey(keyValuePairs)`](#bykeykeyvaluepairs)'s adapter. The main difference is the case where
-the passed value is not present in the `keyValuePairs` object. While [`byKey(keyValuePairs)`](#bykeykeyvaluepairs)'s
-adapter will throw an error, this adapter will return `undefined`:
+This is very similar to [`byKey(keyValuePairs)`](#bykeykeyvaluepairs)'s adapter. The main difference is the case where the
+passed value is not present in the `keyValuePairs` object. While [`byKey(keyValuePairs)`](#bykeykeyvaluepairs)'s adapter will
+throw an error, this adapter will return `undefined`:
 
 ```javascript
 const ScalingStrategies = {
@@ -799,19 +798,19 @@ Extracted from [MDN](https://developer.mozilla.org/en-US/docs/Glossary/Nullish):
 
 > In JavaScript, a nullish value is the value which is either `null` or `undefined`.
 
-Adapters discussed in previous sections are not designed taking _nullish values_ into account. If you try to use them
-for serializing or deserializing `null` or `undefined` values, they could throw an unexpected error.
+Adapters discussed in previous sections are not designed taking _nullish values_ into account. If you try to use them for
+serializing or deserializing `null` or `undefined` values, they could throw an unexpected error.
 
-The same applies when you [write your own adapters](#writing-your-own-adapter). If you don't write your adapter having
-this in mind, it may throw an error when receiving a _nullish value_.
+The same applies when you [write your own adapters](#writing-your-own-adapter). If you don't write your adapter having this in
+mind, it may throw an error when receiving a _nullish value_.
 
 Fortunately, TrueJSON allows to wrap any existing adapter using a _proxy adapter_ that handles `null` and `undefined`
 values:
 
 #### nullishAware(adapter)
 
-Wraps an existing adapter using a proxy that handles both `null` and `undefined` values. This proxy will return the
-received value when it's a _nullish value_; otherwise it will call the real adapter:
+Wraps an existing adapter using a proxy that handles both `null` and `undefined` values. This proxy will return the received
+value when it's a _nullish value_; otherwise it will call the real adapter:
 
 ```javascript
 const hoursToMinutesAdapter = JsonAdapters.nullishAware({
@@ -846,8 +845,8 @@ undefined
 
 #### nullAware(adapter)
 
-Wraps an existing adapter using a proxy that handles only `null` values. This proxy will return `null` when receiving
-the `null` value; otherwise it will call the real adapter:
+Wraps an existing adapter using a proxy that handles only `null` values. This proxy will return `null` when receiving the `null`
+value; otherwise it will call the real adapter:
 
 ```javascript
 const hoursToMinutesAdapter = JsonAdapters.nullishAware({
@@ -884,8 +883,8 @@ Notice that `NaN` is returned when using the `undefined` value.
 
 #### undefinedAware(adapter)
 
-Wraps an existing adapter using a proxy that handles only `undefined` values. This proxy will return `undefined` when
-receiving the `undefined` value; otherwise it will call the real adapter:
+Wraps an existing adapter using a proxy that handles only `undefined` values. This proxy will return `undefined` when receiving
+the `undefined` value; otherwise it will call the real adapter:
 
 ```javascript
 const hoursToMinutesAdapter = JsonAdapters.nullishAware({
@@ -918,8 +917,8 @@ undefined
 undefined
 ```
 
-Notice that `0` is returned when using the `null` value. This happens because `null` is treated as `0` when used in
-arithmetic operations.
+Notice that `0` is returned when using the `null` value. This happens because `null` is treated as `0` when used in arithmetic
+operations.
 
 ## Writing your own adapter
 
@@ -971,8 +970,8 @@ Output:
 
 ## Contributing
 
-This is a library maintained by one person, so any bug report, suggestion, pull request, or any other kind of
-feedback will be really appreciated :slightly_smiling_face:
+This is a library maintained by one person, so any bug report, suggestion, pull request, or any other kind of feedback will be
+really appreciated :slightly_smiling_face:
 
 Please contribute using [GitHub Flow](https://guides.github.com/introduction/flow). Create a branch from the `develop`
 one, add commits, and [open a pull request](https://github.com/nestorrente/true-json/compare).
