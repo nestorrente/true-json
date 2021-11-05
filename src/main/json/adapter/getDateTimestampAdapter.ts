@@ -1,12 +1,12 @@
-import getCustomAdapter, {JsonAdapterWithNullishSupport} from '@/json/adapter/getCustomAdapter';
+import JsonAdapter from '@/json/adapter/JsonAdapter';
 
-export default function getDateTimestampAdapter(): JsonAdapterWithNullishSupport<Date, number> {
-    return getCustomAdapter({
-        adaptToJson(date) {
-            return date.getTime();
-        },
-        recoverFromJson(timestamp) {
-            return new Date(timestamp);
-        }
-    });
+export default function getDateTimestampAdapter(): JsonAdapter<Date, number> {
+	return {
+		adaptToJson(date) {
+			return date.getTime();
+		},
+		recoverFromJson(timestamp) {
+			return new Date(timestamp);
+		}
+	};
 }

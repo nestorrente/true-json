@@ -1,6 +1,6 @@
-import getNullishAwareCustomAdapter from '@/json/adapter/nullish/getNullishAwareCustomAdapter';
+import getNullAwareCustomAdapter from '@/json/adapter/nullish/getNullAwareCustomAdapter';
 
-const nullishAwareCustomAdapter = getNullishAwareCustomAdapter<number, string>({
+const nullishAwareCustomAdapter = getNullAwareCustomAdapter<number, string>({
 	adaptToJson(value) {
 		return value.toString();
 	},
@@ -9,9 +9,8 @@ const nullishAwareCustomAdapter = getNullishAwareCustomAdapter<number, string>({
 	}
 });
 
-const testData: [number | null | undefined, string | null | undefined][] = [
+const testData: [number | null, string | null][] = [
 	[null, null],
-	[undefined, undefined],
 	[7, '7'],
 	[42, '42'],
 	[1024, '1024'],
