@@ -1,46 +1,103 @@
 import getRecordAdapter from '@/json/adapter/getRecordAdapter';
+import {JsonObject} from 'src/main/json/types';
+import JsonAdapter from 'src/main/json/adapter/JsonAdapter';
 
-const textRecordAdapter = getRecordAdapter<string, string>({
+class TestRecordClass {
+	constructor(
+			private hello: 'world',
+			private apple: 'computer',
+			private microsoft: 'word'
+	) {
+	}
+}
+
+const valueAdapter: JsonAdapter<string, string> = {
 	adaptToJson(value: string): string {
 		return value.toUpperCase();
 	},
 	recoverFromJson(value: string): string {
 		return value.toLowerCase();
 	}
-});
+};
 
-test(`Adapt Record to JsonArray`, () => {
+describe('With default config', () => {
 
-	const input = {
-		hello: 'world',
-		apple: 'computer',
-		microsoft: 'word'
-	};
+	const textRecordAdapter = getRecordAdapter<string, string>(valueAdapter);
 
-	const result = textRecordAdapter.adaptToJson(input);
+	test(`Adapt Record to JsonArray`, () => {
 
-	expect(result).toStrictEqual({
-		hello: 'WORLD',
-		apple: 'COMPUTER',
-		microsoft: 'WORD'
+		const input: Record<string, string> = {
+			hello: 'world',
+			apple: 'computer',
+			microsoft: 'word'
+		};
+
+		const result = textRecordAdapter.adaptToJson(input);
+
+		expect(result).toStrictEqual({
+			hello: 'WORLD',
+			apple: 'COMPUTER',
+			microsoft: 'WORD'
+		});
+
+	});
+
+	test(`Adapt class instance Record to JsonArray`, () => {
+
+		const input = new TestRecordClass('world', 'computer', 'word') as unknown as Record<string, string>;
+
+		const result = textRecordAdapter.adaptToJson(input);
+
+		expect(result).toStrictEqual({
+			hello: 'WORLD',
+			apple: 'COMPUTER',
+			microsoft: 'WORD'
+		});
+
+	});
+
+	test(`Recover Record from JsonObject`, () => {
+
+		const input: JsonObject<string> = {
+			hello: 'WORLD',
+			apple: 'COMPUTER',
+			microsoft: 'WORD'
+		};
+
+		const result = textRecordAdapter.recoverFromJson(input);
+
+		expect(result).toStrictEqual({
+			hello: 'world',
+			apple: 'computer',
+			microsoft: 'word'
+		});
+
 	});
 
 });
 
-test(`Adapt Record from JsonArray`, () => {
+describe('With strict plain object check', () => {
 
-	const input = {
-		hello: 'WORLD',
-		apple: 'COMPUTER',
-		microsoft: 'WORD'
-	};
+	const textRecordAdapter = getRecordAdapter<string, string>(valueAdapter, {strictPlainObjectCheck: true});
 
-	const result = textRecordAdapter.recoverFromJson(input);
+	test(`Adapt Record to JsonArray`, () => {
 
-	expect(result).toStrictEqual({
-		hello: 'world',
-		apple: 'computer',
-		microsoft: 'word'
+		const input: Record<string, string> = {
+			hello: 'world',
+			apple: 'computer',
+			microsoft: 'word'
+		};
+
+		expect(() => textRecordAdapter.adaptToJson(input)).not.toThrow();
+
+	});
+
+	test(`Adapt class instance Record to JsonArray`, () => {
+
+		const input = new TestRecordClass('world', 'computer', 'word') as unknown as Record<string, string>;
+
+		expect(() => textRecordAdapter.adaptToJson(input)).toThrow('input value is not a plain object');
+
 	});
 
 });

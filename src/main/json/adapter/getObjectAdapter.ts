@@ -1,6 +1,8 @@
 import {JsonObject, JsonValue} from '@/json/types';
 import JsonAdapter from '@/json/adapter/JsonAdapter';
 import {StringKeyOf} from '@/json/adapter/types';
+import {hasOwnProperty} from '@/json/adapter/utils';
+import {assertPlainObject} from '@/json/adapter/assertions';
 
 export type PropertyAdapters<T> = {
 	[K in keyof T]?: JsonAdapter<T[K], JsonValueFor<T[K]>>;
@@ -11,7 +13,8 @@ type JsonValueFor<T, U extends JsonValue = JsonValue> =
 		| (T extends null ? null : never)
 		| (T extends undefined ? undefined : never);
 
-export interface ObjectAdapterConfig<T> {
+export interface ObjectAdapterConfig<T = unknown> {
+	strictPlainObjectCheck: boolean;
 	omitUnmappedProperties: boolean;
 	omittedProperties: (keyof T)[];
 }
@@ -21,10 +24,14 @@ export default function getObjectAdapter<T>(
 		config?: Partial<ObjectAdapterConfig<T>>
 ): JsonAdapter<T, JsonObject> {
 
-	const fullConfig = getFullConfig(config);
+	const fullConfig = completeConfigWithDefaultValues(config);
 
 	return {
 		adaptToJson(object) {
+
+			if (fullConfig.strictPlainObjectCheck) {
+				assertPlainObject(object);
+			}
 
 			const mappedEntries = getObjectEntries(object, propertyAdapters, fullConfig)
 					.map(([key, value]) => {
@@ -36,6 +43,8 @@ export default function getObjectAdapter<T>(
 
 		},
 		recoverFromJson(jsonObject) {
+
+			assertPlainObject(jsonObject);
 
 			const mappedEntries = getObjectEntries(jsonObject, propertyAdapters, fullConfig)
 					.map(([key, value]) => {
@@ -50,8 +59,9 @@ export default function getObjectAdapter<T>(
 
 }
 
-function getFullConfig<T>(partialConfig?: Partial<ObjectAdapterConfig<T>>): ObjectAdapterConfig<T> {
+function completeConfigWithDefaultValues<T>(partialConfig?: Partial<ObjectAdapterConfig<T>>): ObjectAdapterConfig<T> {
 	return {
+		strictPlainObjectCheck: false,
 		omitUnmappedProperties: false,
 		omittedProperties: [],
 		...partialConfig
@@ -86,5 +96,5 @@ function isIgnoredProperty(propertyName: string, config: ObjectAdapterConfig<any
 }
 
 function isUnmappedProperty(propertyName: string, propertyAdapters: PropertyAdapters<any>) {
-	return !propertyAdapters.hasOwnProperty(propertyName);
+	return !hasOwnProperty(propertyAdapters, propertyName);
 }

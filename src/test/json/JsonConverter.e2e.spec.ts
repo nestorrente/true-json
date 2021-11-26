@@ -92,6 +92,42 @@ const testObjectJson = `{
     "nullableBoolean": null
 }`;
 
+const testObjectJsonWithInvalidChampionshipStartDate = `{
+    "roundScoreByPlayer": [
+        [
+            {
+                "name": "Alice",
+                "birthdate": "2001-10-08T00:00:00.000Z"
+            },
+            [
+                1,
+                2,
+                3
+            ]
+        ],
+        [
+            {
+                "name": "Bob",
+                "birthdate": "1991-10-08T00:00:00.000Z"
+            },
+            [
+                3,
+                2,
+                1
+            ]
+        ]
+    ],
+    "bestScoreByPlayerName": {
+        "Alice": 3,
+        "Bob": 3
+    },
+    "championshipStartDate": null,
+    "championshipEndDate": null,
+    "aggregateFunction": "AVG",
+    "active": "yes",
+    "nullableBoolean": null
+}`;
+
 const booleanToStringAdapter = JsonAdapters.custom<boolean, string>({
 	adaptToJson(value: boolean): string {
 		return value ? 'yes' : 'no';
@@ -138,6 +174,29 @@ describe('Complex object', () => {
 		delete testObjectWithoutUndefinedField.undefinedField;
 		return testObjectWithoutUndefinedField;
 	}
+
+});
+
+describe('Invalid data', () => {
+
+	test('Convert object with invalid data to JSON', () => {
+
+		const testObjectWithInvalidData: TestObject = {
+			...testObject,
+			championshipStartDate: null as unknown as Date
+		};
+
+		expect(() => {
+			converter.stringify(testObjectWithInvalidData, 4);
+		}).toThrow('input value is not a date');
+
+	});
+
+	test('Convert JSON with invalid data back to object', () => {
+		expect(() => {
+			converter.parse(testObjectJsonWithInvalidChampionshipStartDate);
+		}).toThrow('input value is not a number');
+	});
 
 });
 

@@ -43,7 +43,7 @@ describe('Unknown values without default value', () => {
 
 	const knownAnimalsByKeyAdapter = getByKeyLenientAdapter(KnownAnimals);
 
-	test(`Adapt value to its key`, () => {
+	test(`Adapt an unknown value to its key should return undefined`, () => {
 
 		const input: Animal = {
 			name: 'Lion',
@@ -56,11 +56,27 @@ describe('Unknown values without default value', () => {
 
 	});
 
-	test(`Adapt undefined key to value`, () => {
+	test(`Adapt an undefined value should be allowed`, () => {
 
-		const input = undefined;
+		const result = knownAnimalsByKeyAdapter.adaptToJson(undefined);
 
-		const result = knownAnimalsByKeyAdapter.recoverFromJson(input);
+		expect(result).toBeUndefined();
+
+	});
+
+	test(`Recover an unknown key to its value should return undefined`, () => {
+
+		const input = 'UNKNOWN';
+
+		const result = knownAnimalsByKeyAdapter.recoverFromJson(input as KnownAnimalKey);
+
+		expect(result).toBeUndefined();
+
+	});
+
+	test(`Recover an undefined key should be allowed`, () => {
+
+		const result = knownAnimalsByKeyAdapter.recoverFromJson(undefined);
 
 		expect(result).toBeUndefined();
 
@@ -70,9 +86,9 @@ describe('Unknown values without default value', () => {
 
 describe('Unknown values with default value', () => {
 
-	const knownAnimalsByKeyAdapter = getByKeyLenientAdapter(KnownAnimals, 'BIRD');
+	const knownAnimalsByKeyAdapter = getByKeyLenientAdapter<Animal>(KnownAnimals, 'BIRD');
 
-	test(`Adapt value to its key`, () => {
+	test(`Adapt an unknown value to its key should return the default key`, () => {
 
 		const input: Animal = {
 			name: 'Lion',
@@ -85,15 +101,32 @@ describe('Unknown values with default value', () => {
 
 	});
 
-	test(`Adapt undefined key to value`, () => {
+	// An undefined value should be treated like any other unknown value
+	test(`Adapt an undefined value to its key should return the default key`, () => {
 
-		const input = undefined;
+		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+		const result = knownAnimalsByKeyAdapter.adaptToJson(undefined!);
 
-		// @ts-expect-error
+		expect(result).toBe<KnownAnimalKey>('BIRD');
+
+	});
+
+	test(`Adapt an unknown key to its value should return the corresponding value to the default key`, () => {
+
+		const input = 'LION' as KnownAnimalKey;
+
 		const result = knownAnimalsByKeyAdapter.recoverFromJson(input);
 
-		expect(result).toBe(KnownAnimals.BIRD);
+		expect(result).toBe<Animal>(KnownAnimals.BIRD);
 
+	});
+
+	// An undefined key is not a key per-se, as it's not an string, so it should be considered an error
+	test(`Adapt an undefined key to its value should throw an error`, () => {
+		expect(() => {
+			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+			knownAnimalsByKeyAdapter.recoverFromJson(undefined!);
+		}).toThrow('input value is not a string');
 	});
 
 });

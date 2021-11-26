@@ -25,6 +25,7 @@
     "homepage": "https://github.com/nestorrente/true-json",
     "devDependencies": {
         "@types/jest": "^26.0.22",
+        "@types/lodash.isplainobject": "^4.0.6",
         "@types/node": "^15.0.3",
         "@typescript-eslint/eslint-plugin": "^4.20.0",
         "@typescript-eslint/parser": "^4.20.0",
@@ -54,5 +55,8 @@
     "repository": {
         "type": "git",
         "url": "https://github.com/nestorrente/true-json.git"
+    },
+    "dependencies": {
+        "lodash.isplainobject": "^4.0.6"
     }
 }

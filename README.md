@@ -743,7 +743,7 @@ this to happen, you can use
 ### byKeyLenient(keyValuePairs\[, fallbackKey])
 
 This is very similar to [`byKey(keyValuePairs)`](#bykeykeyvaluepairs)'s adapter. The main difference is the case where the
-passed value is not present in the `keyValuePairs` object. While [`byKey(keyValuePairs)`](#bykeykeyvaluepairs)'s adapter will
+passed value is not present in the `keyValuePairs` object. While the [`byKey(keyValuePairs)`](#bykeykeyvaluepairs) adapter will
 throw an error, this adapter will return `undefined`:
 
 ```javascript
@@ -768,7 +768,31 @@ undefined
 undefined
 ```
 
-Alternatively, you can pass a fallback key to use in those cases:
+Due to this, `undefined` value is also a valid input for both `adaptToJson()` and `recoverFromJson()` methods:
+
+```javascript
+const ScalingStrategies = {
+    DEFAULT: new DefaultScalingStrategy(),
+    FAST: new FastScalingStrategy(),
+    SMOOTH: new SmoothScalingStrategy()
+};
+
+const adapter = JsonAdapters.byKeyLenient(ScalingStrategies);
+
+console.log(adapter.adaptToJson(undefined));
+
+console.log(adapter.recoverFromJson(undefined));
+```
+
+Output:
+
+```text
+undefined
+
+undefined
+```
+
+Alternatively, you can pass a fallback key to use when an unknown object or key is passed to the adapter:
 
 ```javascript
 const ScalingStrategies = {
@@ -813,32 +837,25 @@ Wraps an existing adapter using a proxy that handles both `null` and `undefined`
 value when it's a _nullish value_; otherwise it will call the real adapter:
 
 ```javascript
-const hoursToMinutesAdapter = JsonAdapters.nullishAware({
-    adaptToJson(value) {
-        return value * 60;
-    },
-    recoverFromJson(value) {
-        return value / 60;
-    }
-});
+const adapter = JsonAdapters.nullishAware(JsonAdapters.isoDate());
 
-console.log(hoursToMinutesAdapter.adaptToJson(2.5));
-console.log(hoursToMinutesAdapter.adaptToJson(null));
-console.log(hoursToMinutesAdapter.adaptToJson(undefined));
+console.log(adapter.adaptToJson(new Date(0)));
+console.log(adapter.adaptToJson(null));
+console.log(adapter.adaptToJson(undefined));
 
-console.log(hoursToMinutesAdapter.recoverFromJson(150));
-console.log(hoursToMinutesAdapter.recoverFromJson(null));
-console.log(hoursToMinutesAdapter.recoverFromJson(undefined));
+console.log(adapter.recoverFromJson('1970-01-01T00:00:00.000Z'));
+console.log(adapter.recoverFromJson(null));
+console.log(adapter.recoverFromJson(undefined));
 ```
 
 Output:
 
 ```text
-150
+"1970-01-01T00:00:00.000Z"
 null
 undefined
 
-2.5
+Date { Thu Jan 01 1970 00:00:00 GMT+0000 (Coordinated Universal Time) }
 null
 undefined
 ```
@@ -849,34 +866,27 @@ Wraps an existing adapter using a proxy that handles only `null` values. This pr
 value; otherwise it will call the real adapter:
 
 ```javascript
-const hoursToMinutesAdapter = JsonAdapters.nullishAware({
-    adaptToJson(value) {
-        return value * 60;
-    },
-    recoverFromJson(value) {
-        return value / 60;
-    }
-});
+const adapter = JsonAdapters.nullAware(JsonAdapters.isoDate());
 
-console.log(hoursToMinutesAdapter.adaptToJson(2.5));
-console.log(hoursToMinutesAdapter.adaptToJson(null));
-console.log(hoursToMinutesAdapter.adaptToJson(undefined));
+console.log(adapter.adaptToJson(new Date(0)));
+console.log(adapter.adaptToJson(null));
+console.log(adapter.adaptToJson(undefined));
 
-console.log(hoursToMinutesAdapter.recoverFromJson(150));
-console.log(hoursToMinutesAdapter.recoverFromJson(null));
-console.log(hoursToMinutesAdapter.recoverFromJson(undefined));
+console.log(adapter.recoverFromJson('1970-01-01T00:00:00.000Z'));
+console.log(adapter.recoverFromJson(null));
+console.log(adapter.recoverFromJson(undefined));
 ```
 
 Output:
 
 ```text
-150
+"1970-01-01T00:00:00.000Z"
 null
-NaN
+undefined
 
-2.5
+Date { Thu Jan 01 1970 00:00:00 GMT+0000 (Coordinated Universal Time) }
 null
-NaN
+undefined
 ```
 
 Notice that `NaN` is returned when using the `undefined` value.
@@ -887,33 +897,26 @@ Wraps an existing adapter using a proxy that handles only `undefined` values. Th
 the `undefined` value; otherwise it will call the real adapter:
 
 ```javascript
-const hoursToMinutesAdapter = JsonAdapters.nullishAware({
-    adaptToJson(value) {
-        return value * 60;
-    },
-    recoverFromJson(value) {
-        return value / 60;
-    }
-});
+const adapter = JsonAdapters.undefinedAware(JsonAdapters.isoDate());
 
-console.log(hoursToMinutesAdapter.adaptToJson(2.5));
-console.log(hoursToMinutesAdapter.adaptToJson(null));
-console.log(hoursToMinutesAdapter.adaptToJson(undefined));
+console.log(adapter.adaptToJson(new Date(0)));
+console.log(adapter.adaptToJson(null));
+console.log(adapter.adaptToJson(undefined));
 
-console.log(hoursToMinutesAdapter.recoverFromJson(150));
-console.log(hoursToMinutesAdapter.recoverFromJson(null));
-console.log(hoursToMinutesAdapter.recoverFromJson(undefined));
+console.log(adapter.recoverFromJson('1970-01-01T00:00:00.000Z'));
+console.log(adapter.recoverFromJson(null));
+console.log(adapter.recoverFromJson(undefined));
 ```
 
 Output:
 
 ```text
-150
-0
+"1970-01-01T00:00:00.000Z"
+TypeError: Cannot read property 'toJSON' of null
 undefined
 
-2.5
-0
+Date { Thu Jan 01 1970 00:00:00 GMT+0000 (Coordinated Universal Time) }
+null
 undefined
 ```
 
