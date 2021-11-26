@@ -26,7 +26,10 @@ declare function getDateTimestampAdapter(): JsonAdapter<Date, number>;
 declare function getArrayJsonAdapter<T, U extends JsonValue = JsonValue>(elementAdapter: JsonAdapter<T, U>): JsonAdapter<T[], JsonArray<U>>;
 declare function getSetAdapter<T extends JsonValue = JsonValue>(): JsonAdapter<Set<T>, JsonArray<T>>;
 declare function getSetAdapter<T, U extends JsonValue = JsonValue>(elementAdapter: JsonAdapter<T, U>): JsonAdapter<Set<T>, JsonArray<U>>;
-declare function getRecordAdapter<T, U extends JsonValue = JsonValue>(valueAdapter: JsonAdapter<T, U>): JsonAdapter<Record<string, T>, JsonObject<U>>;
+export interface RecordAdapterConfig {
+	strictPlainObjectCheck: boolean;
+}
+declare function getRecordAdapter<T, U extends JsonValue = JsonValue>(valueAdapter: JsonAdapter<T, U>, config?: RecordAdapterConfig): JsonAdapter<Record<string, T>, JsonObject<U>>;
 export declare type MapEntry<K, V> = [
 	K,
 	V
@@ -41,15 +44,16 @@ export declare type PropertyAdapters<T> = {
 	[K in keyof T]?: JsonAdapter<T[K], JsonValueFor<T[K]>>;
 };
 export declare type JsonValueFor<T, U extends JsonValue = JsonValue> = U | (T extends null ? null : never) | (T extends undefined ? undefined : never);
-export interface ObjectAdapterConfig<T> {
+export interface ObjectAdapterConfig<T = unknown> {
+	strictPlainObjectCheck: boolean;
 	omitUnmappedProperties: boolean;
 	omittedProperties: (keyof T)[];
 }
 declare function getObjectAdapter<T>(propertyAdapters: PropertyAdapters<T>, config?: Partial<ObjectAdapterConfig<T>>): JsonAdapter<T, JsonObject>;
 export declare type StringKeyOf<T> = string & keyof T;
 declare function getByKeyAdapter<T, R extends Record<string, T>>(keyValuePairs: R): JsonAdapter<T, StringKeyOf<R>>;
-declare function getByKeyLenientAdapter<T, R extends Record<string, T>>(keyValuePairs: R): JsonAdapter<T | undefined, StringKeyOf<R> | undefined>;
-declare function getByKeyLenientAdapter<T, R extends Record<string, T>>(keyValuePairs: R, fallbackKey: StringKeyOf<R>): JsonAdapter<T, StringKeyOf<R>>;
+declare function getByKeyLenientAdapter<T, R extends Record<string, T> = Record<string, T>>(keyValuePairs: R): JsonAdapter<T | undefined, StringKeyOf<R> | undefined>;
+declare function getByKeyLenientAdapter<T, R extends Record<string, T> = Record<string, T>>(keyValuePairs: R, fallbackKey: StringKeyOf<R>): JsonAdapter<T, StringKeyOf<R>>;
 declare function getCustomAdapter<T, U extends JsonValue = JsonValue>(adapter: JsonAdapter<T, U>): JsonAdapter<T, U>;
 declare function getNullishAwareCustomAdapter<T, U extends JsonValue = JsonValue>(adapter: JsonAdapter<T, U>): JsonAdapter<T | null | undefined, U | null | undefined>;
 declare function getUndefinedAwareCustomAdapter<T, U extends JsonValue = JsonValue>(adapter: JsonAdapter<T, U>): JsonAdapter<T | undefined, U | undefined>;
