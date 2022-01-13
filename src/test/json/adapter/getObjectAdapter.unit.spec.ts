@@ -1,3 +1,4 @@
+// tslint:disable:max-classes-per-file
 import getObjectAdapter from '@/json/adapter/getObjectAdapter';
 import {JsonObject} from '@/json/types';
 
@@ -9,7 +10,16 @@ describe('With default config', () => {
 		text: string;
 	}
 
-	interface SerializableTestObject extends JsonObject {
+	class TestObjectClass implements TestObject {
+		constructor(
+				public date: number[],
+				public probability: number,
+				public text: string,
+		) {
+		}
+	}
+
+	interface AdaptedTestObject extends JsonObject {
 		date: string;
 		probability: string;
 		text: string;
@@ -34,7 +44,7 @@ describe('With default config', () => {
 		}
 	});
 
-	test(`Adapt Object to JsonObject`, () => {
+	test(`Adapt plain object to JsonObject`, () => {
 
 		const input: TestObject = {
 			date: [1970, 1, 1],
@@ -44,7 +54,7 @@ describe('With default config', () => {
 
 		const result = objectAdapter.adaptToJson(input);
 
-		expect(result).toStrictEqual<SerializableTestObject>({
+		expect(result).toStrictEqual<AdaptedTestObject>({
 			date: '1970-01-01',
 			probability: '42%',
 			text: 'hello world'
@@ -52,9 +62,23 @@ describe('With default config', () => {
 
 	});
 
-	test(`Adapt Object from JsonObject`, () => {
+	test(`Adapt class instance to JsonObject`, () => {
 
-		const input: SerializableTestObject = {
+		const input: TestObject = new TestObjectClass([1970, 1, 1], 0.42, 'hello world');
+
+		const result = objectAdapter.adaptToJson(input);
+
+		expect(result).toStrictEqual<AdaptedTestObject>({
+			date: '1970-01-01',
+			probability: '42%',
+			text: 'hello world'
+		});
+
+	});
+
+	test(`Recover plain object from JsonObject`, () => {
+
+		const input: AdaptedTestObject = {
 			date: '1970-01-01',
 			probability: '42%',
 			text: 'hello world'
@@ -67,6 +91,47 @@ describe('With default config', () => {
 			probability: 0.42,
 			text: 'hello world'
 		});
+
+	});
+
+});
+
+describe('With strict plain object check', () => {
+
+	interface TestObject {
+		date: number[];
+		probability: number;
+		text: string;
+	}
+
+	class TestObjectClass implements TestObject {
+		constructor(
+				public date: number[],
+				public probability: number,
+				public text: string,
+		) {
+		}
+	}
+
+	const objectAdapter = getObjectAdapter<TestObject>({}, {strictPlainObjectCheck: true});
+
+	test(`Adapt plain object to JsonObject`, () => {
+
+		const input: TestObject = {
+			date: [1970, 1, 1],
+			probability: 0.42,
+			text: 'hello world'
+		};
+
+		expect(() => objectAdapter.adaptToJson(input)).not.toThrow();
+
+	});
+
+	test(`Adapt class instance to JsonObject`, () => {
+
+		const input: TestObject = new TestObjectClass([1970, 1, 1], 0.42, 'hello world');
+
+		expect(() => objectAdapter.adaptToJson(input)).toThrow('input value is not a plain object');
 
 	});
 

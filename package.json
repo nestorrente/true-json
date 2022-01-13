@@ -1,7 +1,7 @@
 {
     "name": "true-json",
     "description": "TrueJSON: respectful JSON serialization & deserialization for JavaScript",
-    "version": "1.0.0-alpha.4",
+    "version": "1.0.0",
     "main": "dist/true-json.umd.js",
     "module": "dist/true-json.umd.js",
     "types": "dist/true-json.d.ts",
@@ -25,6 +25,7 @@
     "homepage": "https://github.com/nestorrente/true-json",
     "devDependencies": {
         "@types/jest": "^26.0.22",
+        "@types/lodash.isplainobject": "^4.0.6",
         "@types/node": "^15.0.3",
         "@typescript-eslint/eslint-plugin": "^4.20.0",
         "@typescript-eslint/parser": "^4.20.0",
@@ -54,5 +55,8 @@
     "repository": {
         "type": "git",
         "url": "https://github.com/nestorrente/true-json.git"
+    },
+    "dependencies": {
+        "lodash.isplainobject": "^4.0.6"
     }
 }

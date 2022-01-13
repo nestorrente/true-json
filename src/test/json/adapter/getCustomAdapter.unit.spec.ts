@@ -1,10 +1,10 @@
 import getCustomAdapter from '@/json/adapter/getCustomAdapter';
 
 const customAdapter = getCustomAdapter<boolean, string>({
-	adaptToJson(value) {
+	adaptToJson(value: boolean): string {
 		return value ? 'yes' : 'no';
 	},
-	recoverFromJson(value) {
+	recoverFromJson(value: string): boolean {
 		return value === 'yes';
 	}
 });

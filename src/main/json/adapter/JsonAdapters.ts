@@ -10,9 +10,9 @@ import getObjectAdapter from '@/json/adapter/getObjectAdapter';
 import getByKeyAdapter from '@/json/adapter/getByKeyAdapter';
 import getByKeyLenientAdapter from '@/json/adapter/getByKeyLenientAdapter';
 import getCustomAdapter from '@/json/adapter/getCustomAdapter';
-import getNullAwareAdapter from '@/json/adapter/nullish/getNullAwareAdapter';
-import getNullishAwareAdapter from '@/json/adapter/nullish/getNullishAwareAdapter';
-import getUndefinedAwareAdapter from '@/json/adapter/nullish/getUndefinedAwareAdapter';
+import getNullishAwareCustomAdapter from '@/json/adapter/nullish/getNullishAwareCustomAdapter';
+import getUndefinedAwareCustomAdapter from '@/json/adapter/nullish/getUndefinedAwareCustomAdapter';
+import getNullAwareCustomAdapter from '@/json/adapter/nullish/getNullAwareCustomAdapter';
 
 const JsonAdapters = {
 	identity: getIdentityAdapter,
@@ -27,10 +27,9 @@ const JsonAdapters = {
 	byKey: getByKeyAdapter,
 	byKeyLenient: getByKeyLenientAdapter,
 	custom: getCustomAdapter,
-	nullAware: getNullAwareAdapter,
-	undefinedAware: getUndefinedAwareAdapter,
-	nullishAware: getNullishAwareAdapter
+	nullAware: getNullAwareCustomAdapter,
+	undefinedAware: getUndefinedAwareCustomAdapter,
+	nullishAware: getNullishAwareCustomAdapter
 };
-
 
 export default JsonAdapters;
