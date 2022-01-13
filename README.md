@@ -735,10 +735,35 @@ Extracted from [MDN](https://developer.mozilla.org/en-US/docs/Glossary/Nullish):
 > In JavaScript, a nullish value is the value which is either `null` or `undefined`.
 
 Adapters discussed in previous sections are not designed taking _nullish values_ into account. If you try to use them
-for serializing or deserializing `null` or `undefined` values, they could throw an unexpected error.
+for serializing or deserializing `null` or `undefined` values, they could throw an error or return an unexpected value.
+Let's take a look to the behaviour of the set adapter when it receives a _nullish value_:
+
+```javascript
+const standardSetAdapter = JsonAdapters.set();
+
+console.log(standardSetAdapter.adaptToJson(new Set([1, 2, 3])));
+console.log(standardSetAdapter.adaptToJson(null));
+console.log(standardSetAdapter.adaptToJson(undefined));
+
+console.log(standardSetAdapter.recoverFromJson([1, 2, 3]));
+console.log(standardSetAdapter.recoverFromJson(null));
+console.log(standardSetAdapter.recoverFromJson(undefined));
+```
+
+Output:
+
+```text
+[1, 2, 3]
+TypeError: o is not iterable
+TypeError: o is not iterable
+
+Set { 1, 2, 3 }
+TypeError: Cannot read properties of null (reading 'map')
+TypeError: Cannot read properties of undefined (reading 'map')
+```
 
 The same applies when you [write your own adapters](#writing-your-own-adapter). If you don't write your adapter having
-this in mind, it may throw an error when receiving a _nullish value_.
+_nullish values_ in mind, it may not work as expected when receiving one.
 
 Fortunately, TrueJSON allows to wrap any existing adapter using a _proxy adapter_ that handles `null` and `undefined`
 values:
@@ -749,32 +774,25 @@ Wraps an existing adapter using a proxy that handles both `null` and `undefined`
 received value when it's a _nullish value_; otherwise it will call the real adapter:
 
 ```javascript
-const hoursToMinutesAdapter = JsonAdapters.nullishAware({
-    adaptToJson(value) {
-        return value * 60;
-    },
-    recoverFromJson(value) {
-        return value / 60;
-    }
-});
+const nullishAwareSetAdapter = JsonAdapters.set();
 
-console.log(hoursToMinutesAdapter.adaptToJson(2.5));
-console.log(hoursToMinutesAdapter.adaptToJson(null));
-console.log(hoursToMinutesAdapter.adaptToJson(undefined));
+console.log(nullishAwareSetAdapter.adaptToJson(new Set([1, 2, 3])));
+console.log(nullishAwareSetAdapter.adaptToJson(null));
+console.log(nullishAwareSetAdapter.adaptToJson(undefined));
 
-console.log(hoursToMinutesAdapter.recoverFromJson(150));
-console.log(hoursToMinutesAdapter.recoverFromJson(null));
-console.log(hoursToMinutesAdapter.recoverFromJson(undefined));
+console.log(nullishAwareSetAdapter.recoverFromJson([1, 2, 3]));
+console.log(nullishAwareSetAdapter.recoverFromJson(null));
+console.log(nullishAwareSetAdapter.recoverFromJson(undefined));
 ```
 
 Output:
 
 ```text
-150
+[1, 2, 3]
 null
 undefined
 
-2.5
+Set { 1, 2, 3 }
 null
 undefined
 ```
@@ -785,37 +803,30 @@ Wraps an existing adapter using a proxy that handles only `null` values. This pr
 the `null` value; otherwise it will call the real adapter:
 
 ```javascript
-const hoursToMinutesAdapter = JsonAdapters.nullishAware({
-    adaptToJson(value) {
-        return value * 60;
-    },
-    recoverFromJson(value) {
-        return value / 60;
-    }
-});
+const nullAwareSetAdapter = JsonAdapters.nullAware(JsonAdapters.set());
 
-console.log(hoursToMinutesAdapter.adaptToJson(2.5));
-console.log(hoursToMinutesAdapter.adaptToJson(null));
-console.log(hoursToMinutesAdapter.adaptToJson(undefined));
+console.log(nullAwareSetAdapter.adaptToJson(new Set([1, 2, 3])));
+console.log(nullAwareSetAdapter.adaptToJson(null));
+console.log(nullAwareSetAdapter.adaptToJson(undefined));
 
-console.log(hoursToMinutesAdapter.recoverFromJson(150));
-console.log(hoursToMinutesAdapter.recoverFromJson(null));
-console.log(hoursToMinutesAdapter.recoverFromJson(undefined));
+console.log(nullAwareSetAdapter.recoverFromJson([1, 2, 3]));
+console.log(nullAwareSetAdapter.recoverFromJson(null));
+console.log(nullAwareSetAdapter.recoverFromJson(undefined));
 ```
 
 Output:
 
 ```text
-150
+[1, 2, 3]
 null
-NaN
+TypeError: o is not iterable
 
-2.5
+Set { 1, 2, 3 }
 null
-NaN
+TypeError: Cannot read properties of undefined (reading 'map')
 ```
 
-Notice that `NaN` is returned when using the `undefined` value.
+Notice an error is thrown when using the `undefined` value.
 
 #### undefinedAware(adapter)
 
@@ -823,38 +834,30 @@ Wraps an existing adapter using a proxy that handles only `undefined` values. Th
 receiving the `undefined` value; otherwise it will call the real adapter:
 
 ```javascript
-const hoursToMinutesAdapter = JsonAdapters.nullishAware({
-    adaptToJson(value) {
-        return value * 60;
-    },
-    recoverFromJson(value) {
-        return value / 60;
-    }
-});
+const undefinedAwareSetAdapter = JsonAdapters.undefinedAware(JsonAdapters.set());
 
-console.log(hoursToMinutesAdapter.adaptToJson(2.5));
-console.log(hoursToMinutesAdapter.adaptToJson(null));
-console.log(hoursToMinutesAdapter.adaptToJson(undefined));
+console.log(undefinedAwareSetAdapter.adaptToJson(new Set([1, 2, 3])));
+console.log(undefinedAwareSetAdapter.adaptToJson(null));
+console.log(undefinedAwareSetAdapter.adaptToJson(undefined));
 
-console.log(hoursToMinutesAdapter.recoverFromJson(150));
-console.log(hoursToMinutesAdapter.recoverFromJson(null));
-console.log(hoursToMinutesAdapter.recoverFromJson(undefined));
+console.log(undefinedAwareSetAdapter.recoverFromJson([1, 2, 3]));
+console.log(undefinedAwareSetAdapter.recoverFromJson(null));
+console.log(undefinedAwareSetAdapter.recoverFromJson(undefined));
 ```
 
 Output:
 
 ```text
-150
-0
+[1, 2, 3]
+TypeError: o is not iterable
 undefined
 
-2.5
-0
+Set { 1, 2, 3 }
+TypeError: Cannot read properties of null (reading 'map')
 undefined
 ```
 
-Notice that `0` is returned when using the `null` value. This happens because `null` is treated as `0` when used in
-arithmetic operations.
+Notice an error is thrown when using the `null` value.
 
 ## Writing your own adapter
 
@@ -906,7 +909,7 @@ Output:
 
 ## Contributing
 
-This is a library maintained by one person, so any bug report, suggestion, pull request, or any other kind of
+This library is maintained by only one person, so any bug report, suggestion, pull request, or any other kind of
 feedback will be really appreciated :slightly_smiling_face:
 
 Please contribute using [GitHub Flow](https://guides.github.com/introduction/flow). Create a branch from the `develop`
