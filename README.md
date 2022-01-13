@@ -454,6 +454,14 @@ Output:
 }
 ```
 
+#### Configuration options
+
+The record adapter allows to modify its default behaviour using the following configuration options:
+
+| Property | Type | Default value | Description |
+|----------|------|---------------|-------------|
+| `strictPlainObjectCheck` | `boolean` | `false` | When `true`, it will throw an error if the input value of the `adaptToJson()` method is not a plain object. |
+
 ### mapAsEntries(\[config])
 
 By default, JavaScript maps are serialized as an empty object. Using this adapter allows you to serialize them as an array of
@@ -667,8 +675,9 @@ The object adapter allows to modify its default behaviour using the following co
 
 | Property | Type | Default value | Description |
 |----------|------|---------------|-------------|
-| `omitUnmappedProperties` | `boolean` | `false` | When `true`, all unmapped properties won't be present on the resultant object |
-| `omittedProperties` | `string[]` | `[]` | Allows to specify which properties should be omitted manually |
+| `omitUnmappedProperties` | `boolean` | `false` | When `true`, all unmapped properties won't be present on the resultant object. |
+| `omittedProperties` | `string[]` | `[]` | Allows to specify which properties should be omitted manually. |
+| `strictPlainObjectCheck` | `boolean` | `false` | When `true`, it will throw an error if the input value of the `adaptToJson()` method is not a plain object. |
 
 Example using `omittedProperties` option:
 
@@ -822,106 +831,130 @@ Extracted from [MDN](https://developer.mozilla.org/en-US/docs/Glossary/Nullish):
 
 > In JavaScript, a nullish value is the value which is either `null` or `undefined`.
 
-Adapters discussed in previous sections are not designed taking _nullish values_ into account. If you try to use them for
-serializing or deserializing `null` or `undefined` values, they could throw an unexpected error.
+Adapters discussed in previous sections are not designed taking _nullish values_ into account. If you try to use them
+for serializing or deserializing `null` or `undefined` values, they could throw an error or return an unexpected value.
+Let's take a look to the behaviour of the set adapter:
 
-The same applies when you [write your own adapters](#writing-your-own-adapter). If you don't write your adapter having this in
-mind, it may throw an error when receiving a _nullish value_.
+```javascript
+const standardSetAdapter = JsonAdapters.set();
+
+console.log(standardSetAdapter.adaptToJson(new Set([1, 2, 3])));
+console.log(standardSetAdapter.adaptToJson(null));
+console.log(standardSetAdapter.adaptToJson(undefined));
+
+console.log(standardSetAdapter.recoverFromJson([1, 2, 3]));
+console.log(standardSetAdapter.recoverFromJson(null));
+console.log(standardSetAdapter.recoverFromJson(undefined));
+```
+
+Output:
+
+```text
+[1, 2, 3]
+TypeError: o is not iterable
+TypeError: o is not iterable
+
+Set { 1, 2, 3 }
+TypeError: Cannot read properties of null (reading 'map')
+TypeError: Cannot read properties of undefined (reading 'map')
+```
+
+The same applies when you [write your own adapters](#writing-your-own-adapter). If you don't write your adapter having
+_nullish values_ in mind, it may not work as expected when receiving one.
 
 Fortunately, TrueJSON allows to wrap any existing adapter using a _proxy adapter_ that handles `null` and `undefined`
 values:
 
 #### nullishAware(adapter)
 
-Wraps an existing adapter using a proxy that handles both `null` and `undefined` values. This proxy will return the received
-value when it's a _nullish value_; otherwise it will call the real adapter:
+Wraps an existing adapter using a proxy that handles both `null` and `undefined` values. This proxy will return the
+received value when it's a _nullish value_; otherwise it will call the real adapter:
 
 ```javascript
-const adapter = JsonAdapters.nullishAware(JsonAdapters.isoDate());
+const nullishAwareSetAdapter = JsonAdapters.set();
 
-console.log(adapter.adaptToJson(new Date(0)));
-console.log(adapter.adaptToJson(null));
-console.log(adapter.adaptToJson(undefined));
+console.log(nullishAwareSetAdapter.adaptToJson(new Set([1, 2, 3])));
+console.log(nullishAwareSetAdapter.adaptToJson(null));
+console.log(nullishAwareSetAdapter.adaptToJson(undefined));
 
-console.log(adapter.recoverFromJson('1970-01-01T00:00:00.000Z'));
-console.log(adapter.recoverFromJson(null));
-console.log(adapter.recoverFromJson(undefined));
+console.log(nullishAwareSetAdapter.recoverFromJson([1, 2, 3]));
+console.log(nullishAwareSetAdapter.recoverFromJson(null));
+console.log(nullishAwareSetAdapter.recoverFromJson(undefined));
 ```
 
 Output:
 
 ```text
-"1970-01-01T00:00:00.000Z"
+[1, 2, 3]
 null
 undefined
 
-Date { Thu Jan 01 1970 00:00:00 GMT+0000 (Coordinated Universal Time) }
+Set { 1, 2, 3 }
 null
 undefined
 ```
 
 #### nullAware(adapter)
 
-Wraps an existing adapter using a proxy that handles only `null` values. This proxy will return `null` when receiving the `null`
-value; otherwise it will call the real adapter:
+Wraps an existing adapter using a proxy that handles only `null` values. This proxy will return `null` when receiving
+the `null` value; otherwise it will call the real adapter:
 
 ```javascript
-const adapter = JsonAdapters.nullAware(JsonAdapters.isoDate());
+const nullAwareSetAdapter = JsonAdapters.nullAware(JsonAdapters.set());
 
-console.log(adapter.adaptToJson(new Date(0)));
-console.log(adapter.adaptToJson(null));
-console.log(adapter.adaptToJson(undefined));
+console.log(nullAwareSetAdapter.adaptToJson(new Set([1, 2, 3])));
+console.log(nullAwareSetAdapter.adaptToJson(null));
+console.log(nullAwareSetAdapter.adaptToJson(undefined));
 
-console.log(adapter.recoverFromJson('1970-01-01T00:00:00.000Z'));
-console.log(adapter.recoverFromJson(null));
-console.log(adapter.recoverFromJson(undefined));
+console.log(nullAwareSetAdapter.recoverFromJson([1, 2, 3]));
+console.log(nullAwareSetAdapter.recoverFromJson(null));
+console.log(nullAwareSetAdapter.recoverFromJson(undefined));
 ```
 
 Output:
 
 ```text
-"1970-01-01T00:00:00.000Z"
+[1, 2, 3]
 null
-undefined
+TypeError: o is not iterable
 
-Date { Thu Jan 01 1970 00:00:00 GMT+0000 (Coordinated Universal Time) }
+Set { 1, 2, 3 }
 null
-undefined
+TypeError: Cannot read properties of undefined (reading 'map')
 ```
 
-Notice that `NaN` is returned when using the `undefined` value.
+Notice an error is thrown when using the `undefined` value.
 
 #### undefinedAware(adapter)
 
-Wraps an existing adapter using a proxy that handles only `undefined` values. This proxy will return `undefined` when receiving
-the `undefined` value; otherwise it will call the real adapter:
+Wraps an existing adapter using a proxy that handles only `undefined` values. This proxy will return `undefined` when
+receiving the `undefined` value; otherwise it will call the real adapter:
 
 ```javascript
-const adapter = JsonAdapters.undefinedAware(JsonAdapters.isoDate());
+const undefinedAwareSetAdapter = JsonAdapters.undefinedAware(JsonAdapters.set());
 
-console.log(adapter.adaptToJson(new Date(0)));
-console.log(adapter.adaptToJson(null));
-console.log(adapter.adaptToJson(undefined));
+console.log(undefinedAwareSetAdapter.adaptToJson(new Set([1, 2, 3])));
+console.log(undefinedAwareSetAdapter.adaptToJson(null));
+console.log(undefinedAwareSetAdapter.adaptToJson(undefined));
 
-console.log(adapter.recoverFromJson('1970-01-01T00:00:00.000Z'));
-console.log(adapter.recoverFromJson(null));
-console.log(adapter.recoverFromJson(undefined));
+console.log(undefinedAwareSetAdapter.recoverFromJson([1, 2, 3]));
+console.log(undefinedAwareSetAdapter.recoverFromJson(null));
+console.log(undefinedAwareSetAdapter.recoverFromJson(undefined));
 ```
 
 Output:
 
 ```text
-"1970-01-01T00:00:00.000Z"
-TypeError: Cannot read property 'toJSON' of null
+[1, 2, 3]
+TypeError: o is not iterable
 undefined
 
-Date { Thu Jan 01 1970 00:00:00 GMT+0000 (Coordinated Universal Time) }
-null
+Set { 1, 2, 3 }
+TypeError: Cannot read properties of null (reading 'map')
 undefined
 ```
 
-Notice that `0` is returned when using the `null` value. This happens because `null` is treated as `0` when used in arithmetic
-operations.
+Notice an error is thrown when using the `null` value.
 
 ## Writing your own adapter
 
