@@ -15,31 +15,31 @@
 ## Table of contents
 
 * [What's TrueJSON?](#whats-truejson)
-	+ [What's wrong with `JSON.stringify()` and `JSON.parse()`?](#whats-wrong-with-jsonstringify-and-jsonparse)
-	+ [TrueJSON to the rescue](#truejson-to-the-rescue)
+    + [What's wrong with `JSON.stringify()` and `JSON.parse()`?](#whats-wrong-with-jsonstringify-and-jsonparse)
+    + [TrueJSON to the rescue](#truejson-to-the-rescue)
 * [Installation](#installation)
-	+ [Using NPM (module)](#using-npm-module)
-	+ [Using `<script>` tag (standalone)](#using-script-tag-standalone)
+    + [Using NPM (module)](#using-npm-module)
+    + [Using `<script>` tag (standalone)](#using-script-tag-standalone)
 * [Basic usage](#basic-usage)
-	+ [Using `import` (module)](#using-import-module)
-	+ [Using `TrueJSON` object (standalone)](#using-truejson-object-standalone)
+    + [Using `import` (module)](#using-import-module)
+    + [Using `TrueJSON` object (standalone)](#using-truejson-object-standalone)
 * [Using JSON5 and other JSON alternatives](#using-json5-or-other-json-alternatives)
 * [Built-in adapters](#built-in-adapters)
-	+ [identity()](#identity)
-	+ [isoDate()](#isodate)
-	+ [dateTimestamp()](#datetimestamp)
-	+ [array(elementAdapter)](#arrayelementadapter)
-	+ [set(\[elementAdapter\])](#setelementadapter)
-	+ [record(valueAdapter)](#recordvalueadapter)
-	+ [mapAsEntries(\[config\])](#mapasentriesconfig)
-	+ [mapAsRecord(\[config\])](#mapasrecordconfig)
-	+ [object(propertyAdapters\[, config\])](#objectpropertyadapters-config)
-	+ [byKey(keyValuePairs)](#bykeykeyvaluepairs)
-	+ [byKeyLenient(keyValuePairs\[, fallbackKey\])](#bykeykeylenientvaluepairs-fallbackkey)
-	+ [Handling nullish values](#handling-nullish-values)
-		+ [nullishAware(adapter)](#nullishawareadapter)
-		+ [nullAware(adapter)](#nullawareadapter)
-		+ [undefinedAware(adapter)](#undefinedawareadapter)
+    + [identity()](#identity)
+    + [isoDate()](#isodate)
+    + [dateTimestamp()](#datetimestamp)
+    + [array(elementAdapter)](#arrayelementadapter)
+    + [set(\[elementAdapter\])](#setelementadapter)
+    + [record(valueAdapter)](#recordvalueadapter)
+    + [mapAsEntries(\[config\])](#mapasentriesconfig)
+    + [mapAsRecord(\[config\])](#mapasrecordconfig)
+    + [object(propertyAdapters\[, config\])](#objectpropertyadapters-config)
+    + [byKey(keyValuePairs)](#bykeykeyvaluepairs)
+    + [byKeyLenient(keyValuePairs\[, fallbackKey\])](#bykeykeylenientvaluepairs-fallbackkey)
+    + [Handling nullish values](#handling-nullish-values)
+        + [nullishAware(adapter)](#nullishawareadapter)
+        + [nullAware(adapter)](#nullawareadapter)
+        + [undefinedAware(adapter)](#undefinedawareadapter)
 * [Writing your own adapter](#writing-your-own-adapter)
 * [Contributing](#contributing)
 
@@ -67,8 +67,8 @@ If you see the value of the `jsonText` variable, you'll get the following JSON s
 
 ```json
 {
-	"date": "1970-01-01T00:00:00.000Z",
-	"set": {}
+    "date": "1970-01-01T00:00:00.000Z",
+    "set": {}
 }
 ```
 
@@ -108,12 +108,12 @@ If you see the value of the `jsonText` variable, now you'll get the following JS
 
 ```json
 {
-	"date": "1970-01-01T00:00:00.000Z",
-	"set": [
-		1,
-		2,
-		3
-	]
+    "date": "1970-01-01T00:00:00.000Z",
+    "set": [
+        1,
+        2,
+        3
+    ]
 }
 ```
 
