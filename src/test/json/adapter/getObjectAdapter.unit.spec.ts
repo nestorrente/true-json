@@ -235,3 +235,34 @@ describe('Ignoring properties explicitly', () => {
 	});
 
 });
+
+describe('Type checks', () => {
+
+	interface TestObject {
+		date: number[];
+		probability: number;
+		text: string;
+	}
+
+	class TestObjectClass implements TestObject {
+		constructor(
+			public date: number[],
+			public probability: number,
+			public text: string,
+		) {
+		}
+	}
+
+	const objectAdapter = getObjectAdapter<TestObject>({});
+
+	test('Recovering non-plain object', () => {
+
+		const input: TestObject = new TestObjectClass([1970, 1, 1], 0.42, 'hello world');
+
+		expect(() => {
+			objectAdapter.recoverFromJson(input as never);
+		}).toThrow('input value is not a plain object');
+
+	});
+
+});

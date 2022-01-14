@@ -58,3 +58,21 @@ describe('Using an element adapter', () => {
 	});
 
 });
+
+describe('Type checks', () => {
+
+	const numericSetAdapter = getSetAdapter<number>();
+
+	test('Adapting non-Array value', () => {
+		expect(() => {
+			numericSetAdapter.adaptToJson([1, 2, 3] as never);
+		}).toThrow('input value is not a set');
+	});
+
+	test('Recovering non-Array value', () => {
+		expect(() => {
+			numericSetAdapter.recoverFromJson({an: 'object'} as never);
+		}).toThrow('input value is not an array');
+	});
+
+});

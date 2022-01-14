@@ -20,6 +20,8 @@ const valueAdapter: JsonAdapter<string, string> = {
 	}
 };
 
+const testRecordClassInstance = new TestRecordClass('world', 'computer', 'word');
+
 describe('With default config', () => {
 
 	const textRecordAdapter = getRecordAdapter<string, string>(valueAdapter);
@@ -44,7 +46,7 @@ describe('With default config', () => {
 
 	test(`Adapt class instance Record to JsonArray`, () => {
 
-		const input = new TestRecordClass('world', 'computer', 'word') as unknown as Record<string, string>;
+		const input = testRecordClassInstance as unknown as Record<string, string>;
 
 		const result = textRecordAdapter.adaptToJson(input);
 
@@ -94,9 +96,25 @@ describe('With strict plain object check', () => {
 
 	test(`Adapt class instance Record to JsonArray`, () => {
 
-		const input = new TestRecordClass('world', 'computer', 'word') as unknown as Record<string, string>;
+		const input = testRecordClassInstance as unknown as Record<string, string>;
 
 		expect(() => textRecordAdapter.adaptToJson(input)).toThrow('input value is not a plain object');
+
+	});
+
+});
+
+describe('Type checks', () => {
+
+	const textRecordAdapter = getRecordAdapter<string, string>(valueAdapter);
+
+	test('Recovering non-plain object', () => {
+
+        const input = testRecordClassInstance as unknown as Record<string, string>;
+
+		expect(() => {
+			textRecordAdapter.recoverFromJson(input);
+		}).toThrow('input value is not a plain object');
 
 	});
 

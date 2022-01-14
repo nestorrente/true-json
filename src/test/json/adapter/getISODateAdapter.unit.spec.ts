@@ -26,3 +26,31 @@ testData.forEach(([date, text]) => {
 	});
 
 });
+
+describe('Type checks', () => {
+
+	test('Adapting non-Date value', () => {
+		expect(() => {
+			isoDateAdapter.adaptToJson(1234 as never);
+		}).toThrow('input value is not a date');
+	});
+
+	test('Adapting invalid Date value', () => {
+		expect(() => {
+			isoDateAdapter.adaptToJson(new Date('a'));
+		}).toThrow('input value is not a valid date');
+	});
+
+	test('Recovering non-string value', () => {
+		expect(() => {
+			isoDateAdapter.recoverFromJson(1234 as never);
+		}).toThrow('input value is not a string');
+	});
+
+	test('Recovering invalid number value', () => {
+		expect(() => {
+			isoDateAdapter.recoverFromJson('invalid');
+		}).toThrow('input value has not a valid date format');
+	});
+
+});

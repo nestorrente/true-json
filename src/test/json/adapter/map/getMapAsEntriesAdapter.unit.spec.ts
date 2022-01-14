@@ -100,3 +100,23 @@ describe('Using key and value adapters', () => {
 	});
 
 });
+
+describe('Type checks', () => {
+
+	const mapAsEntriesAdapter = getMapAsEntriesAdapter<string, number>();
+
+	test('Adapting non-Map value', () => {
+		expect(() => {
+			mapAsEntriesAdapter.adaptToJson('a text' as never);
+		}).toThrow('input value is not a map');
+	});
+
+	test('Recovering non-entries array', () => {
+		expect(() => {
+			mapAsEntriesAdapter.recoverFromJson([
+				['missing-value tuple'] as never
+			]);
+		}).toThrow('input value is not a tuple');
+	});
+
+});
