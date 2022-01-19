@@ -28,3 +28,19 @@ test(`Adapt Array from JsonArray`, () => {
 	expect(result).toStrictEqual([1, 2, 3, 4, 5]);
 
 });
+
+describe('Type checks', () => {
+
+	test('Adapting non-Array value', () => {
+		expect(() => {
+			numericArrayAdapter.adaptToJson('a text' as never);
+		}).toThrow('input value is not an array');
+	});
+
+	test('Recovering non-Array value', () => {
+		expect(() => {
+			numericArrayAdapter.recoverFromJson({an: 'object'} as never);
+		}).toThrow('input value is not an array');
+	});
+
+});

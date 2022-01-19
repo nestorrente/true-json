@@ -107,3 +107,15 @@ describe('Admit undefined and null as valid values', () => {
 	});
 
 });
+
+describe('Type checks', () => {
+
+	const knownAnimalsByKeyAdapter = getByKeyAdapter(KnownAnimals);
+
+	test('Recovering non-string value', () => {
+		expect(() => {
+			knownAnimalsByKeyAdapter.recoverFromJson(123 as never);
+		}).toThrow('input value is not a string');
+	});
+
+});

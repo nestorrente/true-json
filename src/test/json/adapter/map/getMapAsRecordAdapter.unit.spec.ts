@@ -100,3 +100,21 @@ describe('Using key and value adapters', () => {
 	});
 
 });
+
+describe('Type checks', () => {
+
+	const mapAsRecordAdapter = getMapAsRecordAdapter<string, number>();
+
+	test('Adapting non-Map value', () => {
+		expect(() => {
+			mapAsRecordAdapter.adaptToJson('a text' as never);
+		}).toThrow('input value is not a map');
+	});
+
+	test('Recovering non-plain object array', () => {
+		expect(() => {
+			mapAsRecordAdapter.recoverFromJson(new Date() as never);
+		}).toThrow('input value is not a plain object');
+	});
+
+});
