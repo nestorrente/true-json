@@ -17,6 +17,7 @@
 * [What's TrueJSON?](#whats-truejson)
     + [What's wrong with `JSON.stringify()` and `JSON.parse()`?](#whats-wrong-with-jsonstringify-and-jsonparse)
     + [TrueJSON to the rescue](#truejson-to-the-rescue)
+    + [Features](#features)
 * [Installation](#installation)
     + [Using NPM (module)](#using-npm-module)
     + [Using `<script>` tag (standalone)](#using-script-tag-standalone)
@@ -45,8 +46,8 @@
 
 ## What's TrueJSON?
 
-TrueJSON is a library for serializing and deserializing complex types to JSON in JavaScript and TypeScript. It allows you to
-recover your dates, sets, maps, and other data types when deserializing JSON.
+TrueJSON is a JSON serialization and deserialization library for JavaScript and TypeScript. It helps with the serialization and
+deserialization of complex types such as `Date`, `Set`, `Map`, and many others.
 
 ### What's wrong with `JSON.stringify()` and `JSON.parse()`?
 
@@ -58,12 +59,12 @@ const originalObject = {
     set: new Set([1, 2, 3])
 };
 
-const jsonText = JSON.stringify(originalObject);
+const serializedObject = JSON.stringify(originalObject);
 
-const deserializedObject = JSON.parse(jsonText);
+const deserializedObject = JSON.parse(serializedObject);
 ```
 
-If you see the value of the `jsonText` variable, you'll get the following JSON structure:
+If you check the value of the `serializedObject` variable, you'll see the following JSON structure:
 
 ```json
 {
@@ -72,7 +73,7 @@ If you see the value of the `jsonText` variable, you'll get the following JSON s
 }
 ```
 
-As you can see, your set elements haven't been serialized as you would expect. Moreover, if you see the value of the
+As you can see, your set elements haven't been serialized as you would expect. Moreover, if you check the value of the
 `deserializedObject` variable, you'll see the following object:
 
 ![Deserialized object using native JSON (Google Chrome console)](docs/img/deserialized-object-native.png "Deserialized object using native JSON (Google Chrome console)")
@@ -99,12 +100,12 @@ const originalObject = {
     set: new Set([1, 2, 3])
 };
 
-const jsonText = customJsonConverter.stringify(originalObject);
+const serializedObject = customJsonConverter.stringify(originalObject);
 
-const deserializedObject = customJsonConverter.parse(jsonText);
+const deserializedObject = customJsonConverter.parse(serializedObject);
 ```
 
-If you see the value of the `jsonText` variable, now you'll get the following JSON structure:
+If you check the value of the `serializedObject` variable, now you'll see the following JSON structure:
 
 ```json
 {
@@ -118,11 +119,21 @@ If you see the value of the `jsonText` variable, now you'll get the following JS
 ```
 
 As you can see, now your `Set` has been serialized as a JSON array, preserving its values in the JSON structure. In addition, if
-you see the value of the `deserializedObject` variable, you'll see the following object:
+you check the value of the `deserializedObject` variable, you'll see the following object:
 
 ![Deserialized object using TrueJSON (Google Chrome console)](docs/img/deserialized-object-truejson.png "Deserialized object using TrueJSON (Google Chrome console)")
 
 As you can see, both the `date` property and the `set` property have been deserialized to `Date` and `Set` objects respectively.
+
+In addition, TrueJSON will perform some type checks before serializing or deserializing, throwing errors if the received input
+doesn't match the expected structure.
+
+### Features
+
+* Serialization and deserialization of complex data types - see [Built-in adapters](#built-in-adapters) section.
+* Serialization and deserialization of custom data types - see [Writing your own adapter](#writing-your-own-adapter) section.
+* Type checks on serialization and deserialization.
+* Configurable JSON serializer - see [Using JSON5 and other JSON alternatives](#using-json5-or-other-json-alternatives) section.
 
 ## Installation
 
@@ -963,11 +974,44 @@ You can write your own adapter using the `JsonAdapters.custom()` method:
 ```javascript
 const dateToArrayAdapter = JsonAdapters.custom({
     adaptToJson(date) {
-        return [date.getFullYear(), date.getMonth(), date.getDate()];
+
+        // Perform the desired type checks
+
+        if (!(date instanceof Date)) {
+            throw new TypeError('input value is not a date');
+        }
+
+        // Adapt the Date object to array
+
+        return [
+            date.getFullYear(),
+            date.getMonth(),
+            date.getDate()
+        ];
+
     },
     recoverFromJson(array) {
-        const [year, month, date] = array;
+
+        // Perform the desired type checks
+
+        if (!Array.isArray(array)) {
+            throw new TypeError('input value is not an array');
+        }
+
+        if (array.length !== 3) {
+            throw new TypeError('input value has not the expected length');
+        }
+
+        // Recover the Date object from the deserialized array
+
+        const [
+            year,
+            month,
+            date
+        ] = array;
+
         return new Date(year, month, date);
+
     }
 });
 ```
