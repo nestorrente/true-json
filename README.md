@@ -36,7 +36,7 @@
     + [mapAsRecord(\[config\])](#mapasrecordconfig)
     + [object(propertyAdapters\[, config\])](#objectpropertyadapters-config)
     + [byKey(keyValuePairs)](#bykeykeyvaluepairs)
-    + [byKeyLenient(keyValuePairs\[, fallbackKey\])](#bykeykeylenientvaluepairs-fallbackkey)
+    + [byKeyLenient(keyValuePairs\[, fallbackKey\])](#bykeylenientkeyvaluepairs-fallbackkey)
     + [Handling nullish values](#handling-nullish-values)
         + [nullishAware(adapter)](#nullishawareadapter)
         + [nullAware(adapter)](#nullawareadapter)
