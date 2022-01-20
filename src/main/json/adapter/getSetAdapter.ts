@@ -1,7 +1,7 @@
 import {JsonArray, JsonValue} from '@/json/types';
 import JsonAdapter from '@/json/adapter/JsonAdapter';
 import getArrayAdapter from '@/json/adapter/getArrayJsonAdapter';
-import getIdentityAdapter from '@/json/adapter/getIdentityAdapter';
+import getIdentityAdapter from '@/json/adapter/identity/getIdentityAdapter';
 import {assertArray, assertSet} from '@/json/adapter/assertions';
 
 export default function getSetAdapter<T extends JsonValue = JsonValue>(): JsonAdapter<Set<T>, JsonArray<T>>;

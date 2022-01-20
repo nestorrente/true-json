@@ -47,13 +47,13 @@ describe('Type checks', () => {
 	test('Recovering non-number value', () => {
 		expect(() => {
 			dateTimestampAdapter.recoverFromJson('1234' as never);
-		}).toThrow('input value is not a number');
+		}).toThrow('input value is not a finite number');
 	});
 
 	test('Recovering invalid number value', () => {
 		expect(() => {
 			dateTimestampAdapter.recoverFromJson(Infinity);
-		}).toThrow('input value is not a number');
+		}).toThrow('input value is not a finite number');
 	});
 
 });

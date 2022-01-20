@@ -1,5 +1,5 @@
 import JsonAdapter from '@/json/adapter/JsonAdapter';
-import {assertRealNumber, assertValidDate} from '@/json/adapter/assertions';
+import {assertFiniteNumber, assertValidDate} from '@/json/adapter/assertions';
 
 export default function getDateTimestampAdapter(): JsonAdapter<Date, number> {
 	return {
@@ -8,7 +8,7 @@ export default function getDateTimestampAdapter(): JsonAdapter<Date, number> {
 			return date.getTime();
 		},
 		recoverFromJson(timestamp) {
-			assertRealNumber(timestamp);
+			assertFiniteNumber(timestamp);
 			return new Date(timestamp);
 		}
 	};

@@ -195,7 +195,7 @@ describe('Invalid data', () => {
 	test('Convert JSON with invalid data back to object', () => {
 		expect(() => {
 			converter.parse(testObjectJsonWithInvalidChampionshipStartDate);
-		}).toThrow('input value is not a number');
+		}).toThrow('input value is not a finite number');
 	});
 
 });

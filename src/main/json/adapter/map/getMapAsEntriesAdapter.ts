@@ -1,7 +1,7 @@
 import {JsonArray, JsonValue} from '@/json/types';
 import JsonAdapter from '@/json/adapter/JsonAdapter';
 import getArrayJsonAdapter from '@/json/adapter/getArrayJsonAdapter';
-import getIdentityAdapter from '@/json/adapter/getIdentityAdapter';
+import getIdentityAdapter from '@/json/adapter/identity/getIdentityAdapter';
 import {MapAdapterConfig, MapEntry} from '@/json/adapter/map/types';
 import {assertEntryTuple, assertMap} from '@/json/adapter/assertions';
 

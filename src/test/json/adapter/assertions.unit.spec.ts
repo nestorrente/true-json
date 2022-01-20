@@ -1,12 +1,14 @@
 import {
 	assertArray,
+	assertBoolean,
 	assertDate,
 	assertDateString,
 	assertEntryTuple,
+	assertFiniteNumber,
+	assertIntegerNumber,
 	assertMap,
 	assertNonNullish,
 	assertPlainObject,
-	assertRealNumber,
 	assertSet,
 	assertString,
 	assertStringKeyOf,
@@ -22,12 +24,13 @@ type ExampleValuesGroup =
 		'nullish'
 		| 'null'
 		| 'undefined'
+		| 'booleans'
 		| 'strings'
 		| 'date strings'
 		| 'numbers'
-		| 'ints'
+		| 'int numbers'
 		| 'floats'
-		| 'real numbers'
+		| 'finite numbers'
 		| 'not-a-number'
 		| 'non-finite numbers'
 		| 'arrays'
@@ -51,15 +54,17 @@ objectWithoutPrototype.toString = () => '[object without prototype]';
 const EXAMPLE_VALUES: ExampleValue[] = [
 	{value: null, groups: ['null', 'nullish']},
 	{value: undefined, groups: ['undefined', 'nullish']},
+	{value: true, groups: ['booleans']},
+	{value: false, groups: ['booleans']},
 	{value: '', groups: ['strings', 'keys of test object']},
 	{value: ' ', groups: ['strings']},
 	{value: 'hello world', groups: ['strings', 'keys of test object']},
 	{value: 'another string', groups: ['strings']},
 	{value: '2021-11-24T18:51:43.000Z', groups: ['strings', 'date strings']},
-	{value: 0, groups: ['ints', 'real numbers', 'numbers']},
-	{value: 1, groups: ['ints', 'real numbers', 'numbers']},
-	{value: 1.5, groups: ['floats', 'real numbers', 'numbers']},
-	{value: NaN, groups: ['not-a-number', 'numbers']},
+	{value: 0, groups: ['int numbers', 'finite numbers', 'numbers']},
+	{value: 1, groups: ['int numbers', 'finite numbers', 'numbers']},
+	{value: 1.5, groups: ['floats', 'finite numbers', 'numbers']},
+	{value: NaN, groups: ['not-a-number', 'non-finite numbers', 'numbers']},
 	{value: Infinity, groups: ['non-finite numbers', 'numbers']},
 	{value: -Infinity, groups: ['non-finite numbers', 'numbers']},
 	{value: new Date(), groups: ['dates', 'valid dates']},
@@ -127,17 +132,49 @@ describe('Not nullish', () => {
 
 });
 
-describe('Real number', () => {
+describe('Boolean', () => {
 
-	getExampleValuesBut('real numbers').forEach(value => {
+	getExampleValuesBut('booleans').forEach(value => {
 		test(`Using non-number ${value}`, () => {
-			expect(() => assertRealNumber(value)).toThrow('input value is not a number');
+			expect(() => assertBoolean(value)).toThrow('input value is not a boolean');
 		});
 	});
 
-	getExampleValuesFrom('real numbers').forEach(value => {
+	getExampleValuesFrom('booleans').forEach(value => {
 		test(`Using number ${value}`, () => {
-			expect(() => assertRealNumber(value)).not.toThrow();
+			expect(() => assertBoolean(value)).not.toThrow();
+		});
+	});
+
+});
+
+describe('Integer number', () => {
+
+	getExampleValuesBut('int numbers').forEach(value => {
+		test(`Using non-number ${value}`, () => {
+			expect(() => assertIntegerNumber(value)).toThrow('input value is not an integer');
+		});
+	});
+
+	getExampleValuesFrom('int numbers').forEach(value => {
+		test(`Using number ${value}`, () => {
+			expect(() => assertIntegerNumber(value)).not.toThrow();
+		});
+	});
+
+});
+
+describe('Finite number', () => {
+
+	getExampleValuesBut('finite numbers').forEach(value => {
+		test(`Using non-number ${value}`, () => {
+			expect(() => assertFiniteNumber(value)).toThrow('input value is not a finite number');
+		});
+	});
+
+	getExampleValuesFrom('finite numbers').forEach(value => {
+		test(`Using number ${value}`, () => {
+			expect(() => assertFiniteNumber(value)).not.toThrow();
 		});
 	});
 

@@ -1,6 +1,6 @@
 import getRecordAdapter from '@/json/adapter/getRecordAdapter';
-import {JsonObject} from 'src/main/json/types';
-import JsonAdapter from 'src/main/json/adapter/JsonAdapter';
+import {JsonObject} from '@/json/types';
+import JsonAdapter from '@/json/adapter/JsonAdapter';
 
 class TestRecordClass {
 	constructor(
@@ -110,7 +110,7 @@ describe('Type checks', () => {
 
 	test('Recovering non-plain object', () => {
 
-        const input = testRecordClassInstance as unknown as Record<string, string>;
+		const input = testRecordClassInstance as unknown as Record<string, string>;
 
 		expect(() => {
 			textRecordAdapter.recoverFromJson(input);

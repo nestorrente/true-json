@@ -1,4 +1,4 @@
-import getIdentityAdapter from '@/json/adapter/getIdentityAdapter';
+import getIdentityAdapter from '@/json/adapter/identity/getIdentityAdapter';
 import getISODateAdapter from '@/json/adapter/getISODateAdapter';
 import getDateTimestampAdapter from '@/json/adapter/getDateTimestampAdapter';
 import getArrayJsonAdapter from '@/json/adapter/getArrayJsonAdapter';

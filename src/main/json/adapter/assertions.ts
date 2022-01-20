@@ -14,9 +14,21 @@ export const assertNonNullish: TypeAssertion<NonNullable<unknown>> = value => {
 	}
 };
 
-export const assertRealNumber: TypeAssertion<number> = value => {
-	if (typeof value !== 'number' || !isFinite(value)) {
-		throw new TypeError('input value is not a number');
+export const assertBoolean: TypeAssertion<string> = value => {
+	if (typeof value !== 'boolean') {
+		throw new TypeError('input value is not a boolean');
+	}
+};
+
+export const assertIntegerNumber: TypeAssertion<number> = value => {
+	if (typeof value !== 'number' || !Number.isInteger(value)) {
+		throw new TypeError('input value is not an integer');
+	}
+};
+
+export const assertFiniteNumber: TypeAssertion<number> = value => {
+	if (typeof value !== 'number' || !Number.isFinite(value)) {
+		throw new TypeError('input value is not a finite number');
 	}
 };
 
@@ -29,7 +41,7 @@ export const assertString: TypeAssertion<string> = value => {
 export const assertDateString: TypeAssertion<string> = value => {
 	assertString(value);
 
-	if (isNaN(new Date(value).getTime())) {
+	if (Number.isNaN(new Date(value).getTime())) {
 		throw new TypeError('input value has not a valid date format');
 	}
 };
@@ -43,7 +55,7 @@ export const assertDate: TypeAssertion<Date> = value => {
 export const assertValidDate: TypeAssertion<Date> = value => {
 	assertDate(value);
 
-	if (isNaN(value.getTime())) {
+	if (Number.isNaN(value.getTime())) {
 		throw new TypeError('input value is not a valid date');
 	}
 };
