@@ -23,7 +23,7 @@ describe('Without type checks callback', () => {
 
 		});
 
-		test(`Adapt ${JSON.stringify(value)} from JsonValue`, () => {
+		test(`Recover ${JSON.stringify(value)} from JsonValue`, () => {
 
 			const result = identityAdapter.recoverFromJson(value);
 
