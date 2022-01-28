@@ -26,7 +26,6 @@
     + [Using `TrueJSON` object (standalone)](#using-truejson-object-standalone)
 * [Using JSON5 and other JSON alternatives](#using-json5-or-other-json-alternatives)
 * [Built-in adapters](#built-in-adapters)
-    + [identity()](#identity)
     + [isoDate()](#isodate)
     + [dateTimestamp()](#datetimestamp)
     + [array(elementAdapter)](#arrayelementadapter)
@@ -37,6 +36,12 @@
     + [object(propertyAdapters\[, config\])](#objectpropertyadapters-config)
     + [byKey(keyValuePairs)](#bykeykeyvaluepairs)
     + [byKeyLenient(keyValuePairs\[, fallbackKey\])](#bykeylenientkeyvaluepairs-fallbackkey)
+    + [Identity adapters](#identity-adapters)
+        + [identity(\[typeChecksCallback\])](#identitytypecheckscallback)
+        + [stringIdentity()](#stringidentity)
+        + [numberIdentity()](#numberidentity)
+        + [integerIdentity()](#integeridentity)
+        + [booleanIdentity()](#booleanidentity)
     + [Handling nullish values](#handling-nullish-values)
         + [nullishAware(adapter)](#nullishawareadapter)
         + [nullAware(adapter)](#nullawareadapter)
@@ -288,28 +293,6 @@ console.log(userAsJson);
 ## Built-in adapters
 
 In this section, we will cover the build-in adapters that TrueJSON provides to you.
-
-### identity()
-
-The identity adapter takes its name from the _identity function_ concept. It just returns the same value it receives:
-
-```javascript
-const adapter = JsonAdapters.identity();
-
-console.log(adapter.adaptToJson(3));
-
-console.log(adapter.recoverFromJson(3));
-```
-
-Output:
-
-```text
-3
-
-3
-```
-
-You won't normally need to use this adapter, but it could be useful if you want to write your own.
 
 ### isoDate()
 
@@ -678,7 +661,7 @@ Output:
 }
 ```
 
-By default, any unmapped property will be adapted using the [identity adapter](#identity).
+By default, any unmapped property will be adapted using the [identity adapter](#identitytypecheckscallback).
 
 #### Configuration options
 
@@ -835,6 +818,52 @@ Output:
 
 DefaultScalingStrategy { }
 ```
+
+### Identity adapters
+
+Identity adapters take their name from the concept of _identity function_. Those adapters doesn't really adapt its input
+value, but they're still able to perform some type checks that will ensure the received JSON has the expected format.
+The following sections will cover the different identity adapters provided by TrueJSON out-of-the-box.
+
+#### identity(\[typeChecksCallback])
+
+The identity adapter takes its name from the concept of _identity function_. It just returns the same value it receives:
+
+```javascript
+const adapter = JsonAdapters.identity();
+
+console.log(adapter.adaptToJson(3));
+
+console.log(adapter.recoverFromJson(3));
+```
+
+Output:
+
+```text
+3
+
+3
+```
+
+By default, it doesn't perform any type checks, but you can provide your own callback, allowing you to implement any
+type-checking logic that you may need. Additionally, in the following sections you'll find some other identity adapters
+that perform some of the most-common type-checks.
+
+#### stringIdentity()
+
+_Work in progress_
+
+#### numberIdentity()
+
+_Work in progress_
+
+#### integerIdentity()
+
+_Work in progress_
+
+#### booleanIdentity()
+
+_Work in progress_
 
 ### Handling nullish values
 
