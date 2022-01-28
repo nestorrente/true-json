@@ -846,8 +846,44 @@ Output:
 ```
 
 By default, it doesn't perform any type checks, but you can provide your own callback, allowing you to implement any
-type-checking logic that you may need. Additionally, in the following sections you'll find some other identity adapters
-that perform some of the most-common type-checks.
+type-checking logic that you may need:
+
+```javascript
+const probabilityAdapter = JsonAdapters.identity(input => {
+
+    if (typeof input !== 'number' || !Number.isFinite()) {
+        throw new TypeError('input value is not a finite number');
+    }
+
+    if(input < 0 || input > 1) {
+        throw new Error('input value is out of [0, 1] range');
+    }
+
+});
+
+console.log(probabilityAdapter.adaptToJson('A text'));
+console.log(probabilityAdapter.adaptToJson(3));
+console.log(probabilityAdapter.adaptToJson(0.3));
+
+console.log(probabilityAdapter.recoverFromJson(Infinity));
+console.log(probabilityAdapter.recoverFromJson(-1));
+console.log(probabilityAdapter.recoverFromJson(0.95));
+```
+
+Output:
+
+```text
+TypeError: input value is not a finite number
+Error: input value is out of [0, 1] range
+0.3
+
+TypeError: input value is not a finite number
+Error: input value is out of [0, 1] range
+0.95
+```
+
+Additionally, in the following sections you'll find some other identity adapters that perform some of the most-common
+type-checks.
 
 #### stringIdentity()
 
