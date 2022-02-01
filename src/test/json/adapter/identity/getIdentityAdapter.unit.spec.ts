@@ -9,7 +9,7 @@ const testValues: JsonValue[] = [
 	{a: 1, b: [2, 3], c: 'four'}
 ];
 
-describe('Without type checks callback', () => {
+describe('Without validator', () => {
 
 	const identityAdapter = getIdentityAdapter();
 
@@ -35,7 +35,7 @@ describe('Without type checks callback', () => {
 
 });
 
-describe('With type checks callback', () => {
+describe('With validator', () => {
 
 	const positiveNumberIdentityAdapter = getIdentityAdapter<number>((value) => {
 		if (typeof value !== 'number' || value <= 0) {

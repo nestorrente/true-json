@@ -27,7 +27,7 @@ testData.forEach(([date, text]) => {
 
 });
 
-describe('Type checks', () => {
+describe('Input validations', () => {
 
 	test('Adapting non-Date value', () => {
 		expect(() => {

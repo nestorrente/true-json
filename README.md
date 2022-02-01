@@ -37,7 +37,7 @@
     + [byKey(keyValuePairs)](#bykeykeyvaluepairs)
     + [byKeyLenient(keyValuePairs\[, fallbackKey\])](#bykeylenientkeyvaluepairs-fallbackkey)
     + [Identity adapters](#identity-adapters)
-        + [identity(\[typeChecksCallback\])](#identitytypecheckscallback)
+        + [identity(\[validator\])](#identityvalidator)
         + [stringIdentity()](#stringidentity)
         + [numberIdentity()](#numberidentity)
         + [integerIdentity()](#integeridentity)
@@ -130,14 +130,14 @@ you check the value of the `deserializedObject` variable, you'll see the followi
 
 As you can see, both the `date` property and the `set` property have been deserialized to `Date` and `Set` objects respectively.
 
-In addition, TrueJSON will perform some type checks before serializing or deserializing, throwing errors if the received input
-doesn't match the expected structure.
+In addition, TrueJSON will perform some validations (i.e. type checks) before serializing or deserializing, throwing errors if
+the received input doesn't match the expected structure.
 
 ### Features
 
 * Serialization and deserialization of complex data types - see [Built-in adapters](#built-in-adapters) section.
 * Serialization and deserialization of custom data types - see [Writing your own adapter](#writing-your-own-adapter) section.
-* Type checks on serialization and deserialization.
+* Input validation on serialization and deserialization.
 * Configurable JSON serializer - see [Using JSON5 and other JSON alternatives](#using-json5-or-other-json-alternatives) section.
 
 ## Installation
@@ -661,7 +661,7 @@ Output:
 }
 ```
 
-By default, any unmapped property will be adapted using the [identity adapter](#identitytypecheckscallback).
+By default, any unmapped property will be adapted using the [identity adapter](#identityvalidator).
 
 #### Configuration options
 
@@ -822,10 +822,10 @@ DefaultScalingStrategy { }
 ### Identity adapters
 
 Identity adapters take their name from the concept of _identity function_. Those adapters doesn't really adapt its input
-value, but they're still able to perform some type checks that will ensure the received JSON has the expected format.
+value, but they're still able to perform some validations that will ensure the received JSON has the expected format.
 The following sections will cover the different identity adapters provided by TrueJSON out-of-the-box.
 
-#### identity(\[typeChecksCallback])
+#### identity(\[validator])
 
 The identity adapter takes its name from the concept of _identity function_. It just returns the same value it receives:
 
@@ -845,8 +845,8 @@ Output:
 3
 ```
 
-By default, it doesn't perform any type checks, but you can provide your own callback, allowing you to implement any
-type-checking logic that you may need:
+By default, it doesn't perform any validations, but it accepts to pass a validator function, allowing you to implement
+any validation logic that you may need:
 
 ```javascript
 const probabilityAdapter = JsonAdapters.identity(input => {
@@ -883,7 +883,7 @@ Error: input value is out of [0, 1] range
 ```
 
 Additionally, in the following sections you'll find some other identity adapters that perform some of the most-common
-type-checks.
+type validations.
 
 #### stringIdentity()
 
@@ -1040,7 +1040,7 @@ You can write your own adapter using the `JsonAdapters.custom()` method:
 const dateToArrayAdapter = JsonAdapters.custom({
     adaptToJson(date) {
 
-        // Perform the desired type checks
+        // Perform some validations
 
         if (!(date instanceof Date)) {
             throw new TypeError('input value is not a date');
@@ -1057,7 +1057,7 @@ const dateToArrayAdapter = JsonAdapters.custom({
     },
     recoverFromJson(array) {
 
-        // Perform the desired type checks
+        // Perform some validations
 
         if (!Array.isArray(array)) {
             throw new TypeError('input value is not an array');

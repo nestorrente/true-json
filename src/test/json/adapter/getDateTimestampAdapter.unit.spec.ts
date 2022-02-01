@@ -30,7 +30,7 @@ testData.forEach(timestamp => {
 
 });
 
-describe('Type checks', () => {
+describe('Input validations', () => {
 
 	test('Adapting non-Date value', () => {
 		expect(() => {

@@ -101,7 +101,7 @@ describe('Using key and value adapters', () => {
 
 });
 
-describe('Type checks', () => {
+describe('Input validations', () => {
 
 	const mapAsRecordAdapter = getMapAsRecordAdapter<string, number>();
 

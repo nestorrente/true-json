@@ -1,11 +1,12 @@
 import {JsonValue} from '@/json/types';
 import JsonAdapter from '@/json/adapter/JsonAdapter';
-import {TypeAssertion} from '@/json/adapter/assertions';
+
+export type InputValueValidator = (value: unknown) => void;
 
 export default function getIdentityAdapter<T extends JsonValue = JsonValue>(
-		typeChecksCallback?: TypeAssertion<T>
+		validator?: InputValueValidator
 ): JsonAdapter<T, T> {
-	if (typeChecksCallback == null) {
+	if (validator == null) {
 		return {
 			adaptToJson: v => v,
 			recoverFromJson: v => v
@@ -13,13 +14,11 @@ export default function getIdentityAdapter<T extends JsonValue = JsonValue>(
 	} else {
 		return {
 			adaptToJson: value => {
-				// @ts-expect-error false positive
-				typeChecksCallback(value);
+				validator(value);
 				return value;
 			},
 			recoverFromJson: value => {
-				// @ts-expect-error false positive
-				typeChecksCallback(value);
+				validator(value);
 				return value;
 			}
 		};

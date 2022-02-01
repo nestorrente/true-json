@@ -104,7 +104,7 @@ describe('With strict plain object check', () => {
 
 });
 
-describe('Type checks', () => {
+describe('Input validations', () => {
 
 	const textRecordAdapter = getRecordAdapter<string, string>(valueAdapter);
 

@@ -236,7 +236,7 @@ describe('Ignoring properties explicitly', () => {
 
 });
 
-describe('Type checks', () => {
+describe('Input validations', () => {
 
 	interface TestObject {
 		date: number[];

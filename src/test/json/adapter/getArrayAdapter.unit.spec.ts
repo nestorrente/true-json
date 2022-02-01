@@ -29,7 +29,7 @@ test(`Adapt Array from JsonArray`, () => {
 
 });
 
-describe('Type checks', () => {
+describe('Input validations', () => {
 
 	test('Adapting non-Array value', () => {
 		expect(() => {

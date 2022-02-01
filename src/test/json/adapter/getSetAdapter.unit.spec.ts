@@ -59,7 +59,7 @@ describe('Using an element adapter', () => {
 
 });
 
-describe('Type checks', () => {
+describe('Input validations', () => {
 
 	const numericSetAdapter = getSetAdapter<number>();
 

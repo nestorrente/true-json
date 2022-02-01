@@ -175,7 +175,7 @@ describe('Admit undefined and null as valid values', () => {
 
 });
 
-describe('Type checks', () => {
+describe('Input validations', () => {
 
 	const knownAnimalsByKeyAdapter = getByKeyLenientAdapter(KnownAnimals);
 
