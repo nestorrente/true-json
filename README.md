@@ -887,19 +887,102 @@ type validations.
 
 #### stringIdentity()
 
-_Work in progress_
+The string identity adapter simply returns the same value it receives, throwing an error if the value is not a string:
+
+```javascript
+const stringIdentityAdapter = JsonAdapters.stringIdentity();
+
+console.log(stringIdentityAdapter.adaptToJson('A text'));
+console.log(stringIdentityAdapter.adaptToJson(3));
+
+console.log(stringIdentityAdapter.recoverFromJson('Another text'));
+console.log(stringIdentityAdapter.recoverFromJson(['an', 'array']));
+```
+
+Output:
+
+```text
+"A text"
+TypeError: input value is not a string
+
+"Another text"
+TypeError: input value is not a string
+```
 
 #### numberIdentity()
 
-_Work in progress_
+The number identity adapter simply returns the same value it receives, throwing an error if the value is not a finite
+number (this means that non-finite values like `Infinite`, `-Infinite` or `NaN` are not valid):
+
+```javascript
+const integerIdentityAdapter = JsonAdapters.numberIdentity();
+
+console.log(integerIdentityAdapter.adaptToJson(1234));
+console.log(integerIdentityAdapter.adaptToJson(Infinity));
+
+console.log(integerIdentityAdapter.recoverFromJson(-5.7));
+console.log(integerIdentityAdapter.recoverFromJson({an: 'object'}));
+```
+
+Output:
+
+```text
+1234
+TypeError: input value is not a finite number
+
+-5.7
+TypeError: input value is not a finite number
+```
 
 #### integerIdentity()
 
-_Work in progress_
+The integer identity adapter simply returns the same value it receives, throwing an error if the value is not an integer
+number (this means that decimal numbers and non-finite values like `12.34`, `Infinite`, `-Infinite` or `NaN` are not
+valid):
+
+```javascript
+const integerIdentityAdapter = JsonAdapters.integerIdentity();
+
+console.log(integerIdentityAdapter.adaptToJson(1234));
+console.log(integerIdentityAdapter.adaptToJson(12.34));
+
+console.log(integerIdentityAdapter.recoverFromJson(-5));
+console.log(integerIdentityAdapter.recoverFromJson(NaN));
+```
+
+Output:
+
+```text
+1234
+TypeError: input value is not an integer
+
+-5
+TypeError: input value is not an integer
+```
 
 #### booleanIdentity()
 
-_Work in progress_
+The boolean identity adapter simply returns the same value it receives, throwing an error if the value is not a boolean:
+
+```javascript
+const booleanIdentityAdapter = JsonAdapters.booleanIdentity();
+
+console.log(booleanIdentityAdapter.adaptToJson(true));
+console.log(booleanIdentityAdapter.adaptToJson('true'));
+
+console.log(booleanIdentityAdapter.recoverFromJson(false));
+console.log(booleanIdentityAdapter.recoverFromJson(0));
+```
+
+Output:
+
+```text
+true
+TypeError: input value is not a boolean
+
+false
+TypeError: input value is not a boolean
+```
 
 ### Handling nullish values
 

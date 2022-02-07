@@ -13,9 +13,17 @@ import getCustomAdapter from '@/json/adapter/getCustomAdapter';
 import getNullishAwareCustomAdapter from '@/json/adapter/nullish/getNullishAwareCustomAdapter';
 import getUndefinedAwareCustomAdapter from '@/json/adapter/nullish/getUndefinedAwareCustomAdapter';
 import getNullAwareCustomAdapter from '@/json/adapter/nullish/getNullAwareCustomAdapter';
+import getStringIdentityAdapter from '@/json/adapter/identity/getStringIdentityAdapter';
+import getNumberIdentityAdapter from '@/json/adapter/identity/getNumberIdentityAdapter';
+import getIntegerIdentityAdapter from '@/json/adapter/identity/getIntegerIdentityAdapter';
+import getBooleanIdentityAdapter from '@/json/adapter/identity/getBooleanIdentityAdapter';
 
 const JsonAdapters = {
 	identity: getIdentityAdapter,
+	stringIdentity: getStringIdentityAdapter,
+	numberIdentity: getNumberIdentityAdapter,
+	integerIdentity: getIntegerIdentityAdapter,
+	booleanIdentity: getBooleanIdentityAdapter,
 	isoDate: getISODateAdapter,
 	dateTimestamp: getDateTimestampAdapter,
 	array: getArrayJsonAdapter,
