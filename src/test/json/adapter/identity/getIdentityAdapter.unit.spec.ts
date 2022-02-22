@@ -88,6 +88,7 @@ describe('With validator', () => {
 	});
 
 	it.each`
+		value
 		${0}
 		${-1}
 		${'5'}
