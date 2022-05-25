@@ -31,7 +31,7 @@
         "@typescript-eslint/parser": "^5.12.1",
         "dts-bundle-generator": "^6.5.0",
         "eslint": "^8.9.0",
-        "eslint-config-standard": "^16.0.2",
+        "eslint-config-standard": "^17.0.0",
         "eslint-plugin-import": "^2.25.4",
         "eslint-plugin-node": "^11.1.0",
         "eslint-plugin-promise": "^6.0.0",
