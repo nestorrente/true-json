@@ -114,7 +114,7 @@ If you check the value of the `serializedObject` variable, now you'll see the fo
 
 ```json
 {
-    "date": "1970-01-01T00:00:00.000Z",
+    "date": "2021-05-08T06:45:45.000Z",
     "set": [
         1,
         2,
