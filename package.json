@@ -1,7 +1,7 @@
 {
     "name": "true-json",
     "description": "TrueJSON: respectful JSON serialization & deserialization for JavaScript",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "main": "dist/true-json.umd.js",
     "module": "dist/true-json.umd.js",
     "types": "dist/true-json.d.ts",
