@@ -7,11 +7,6 @@
 
 [comment]: <> ([![npm]&#40;https://img.shields.io/npm/dw/true-json.svg&#41;]&#40;https://www.npmjs.com/package/true-json&#41;)
 
-![Coverage statements](coverage/badge-statements.svg)
-![Coverage branches](coverage/badge-branches.svg)
-![Coverage functions](coverage/badge-functions.svg)
-![Coverage lines](coverage/badge-lines.svg)
-
 ## Table of contents
 
 * [What's TrueJSON?](#whats-truejson)

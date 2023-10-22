@@ -13,13 +13,13 @@ type JsonValueFor<T, U extends JsonValue = JsonValue> =
 		| (T extends null ? null : never)
 		| (T extends undefined ? undefined : never);
 
-export interface ObjectAdapterConfig<T = unknown> {
+export interface ObjectAdapterConfig<T extends object = object> {
 	strictPlainObjectCheck: boolean;
 	omitUnmappedProperties: boolean;
 	omittedProperties: (keyof T)[];
 }
 
-export default function getObjectAdapter<T>(
+export default function getObjectAdapter<T extends object>(
 		propertyAdapters: PropertyAdapters<T>,
 		config?: Partial<ObjectAdapterConfig<T>>
 ): JsonAdapter<T, JsonObject> {
@@ -48,7 +48,7 @@ export default function getObjectAdapter<T>(
 
 			const mappedEntries = getObjectEntries(jsonObject, propertyAdapters, fullConfig)
 					.map(([key, value]) => {
-						const adapter: JsonAdapter<any, any> | undefined = propertyAdapters[key as keyof T];
+						const adapter: JsonAdapter<unknown, JsonValue> | undefined = propertyAdapters[key as keyof T];
 						return [key, adapter ? adapter.recoverFromJson(value) : value];
 					});
 
@@ -59,7 +59,9 @@ export default function getObjectAdapter<T>(
 
 }
 
-function completeConfigWithDefaultValues<T>(partialConfig?: Partial<ObjectAdapterConfig<T>>): ObjectAdapterConfig<T> {
+function completeConfigWithDefaultValues<T extends object>(
+	partialConfig?: Partial<ObjectAdapterConfig<T>>
+): ObjectAdapterConfig<T> {
 	return {
 		strictPlainObjectCheck: false,
 		omitUnmappedProperties: false,
