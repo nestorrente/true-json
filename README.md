@@ -1,6 +1,6 @@
 # TrueJSON
 
-> Respectful JSON serialization & deserialization for JavaScript
+Respectful JSON serialization & deserialization for JavaScript
 
 [![License](https://img.shields.io/npm/l/make-coverage-badge.svg)](https://opensource.org/licenses/MIT)
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.0-4baaaa.svg)](CODE_OF_CONDUCT.md)
@@ -78,7 +78,7 @@ As you can see, your set elements haven't been serialized as you would expect. M
 
 ![Deserialized object using native JSON (Google Chrome console)](docs/img/deserialized-object-native.png "Deserialized object using native JSON (Google Chrome console)")
 
-Now the `date` property is a `string`, and the `set` property is an empty object, which, probably, isn't the desired behaviour.
+Now the `date` property is a `string`, and the `set` property is an empty object, which probably isn't the desired behaviour.
 
 ### TrueJSON to the rescue
 
@@ -87,7 +87,7 @@ information. This can be done by using _JSON adapters_, which are components tha
 _jsonable_ values. Let's see an example:
 
 ```javascript
-import {JsonConverter, JsonAdapters} from 'true-json';
+import { JsonConverter, JsonAdapters } from 'true-json';
 
 // Create a converter using adapters to describe your object's type
 const customJsonConverter = new JsonConverter(JsonAdapters.object({
@@ -148,7 +148,7 @@ npm install --save true-json
 Then you can import TrueJSON objects in your modules:
 
 ```javascript
-import {JsonConverter, JsonAdapters} from 'true-json';
+import { JsonConverter, JsonAdapters } from 'true-json';
 ```
 
 ### Using `<script>` tag \(standalone\)
@@ -177,7 +177,7 @@ The script will create a global `TrueJSON` object, which contains all the export
 ### Using `import` \(module\)
 
 ```javascript
-import {JsonConverter, JsonAdapters} from 'true-json';
+import { JsonConverter, JsonAdapters } from 'true-json';
 
 const user = {
     name: 'John Doe',
@@ -201,33 +201,11 @@ console.log(userAsJson);
 
 ### Using `TrueJSON` object \(standalone\)
 
-You can access any object just by doing `TrueJSON.[ObjectName]`:
+You can access any object just by doing `TrueJSON.[ObjectName]`. We strongly recommend
+using ES6 _destructuring assignment_ to get a similar result to module imports:
 
 ```javascript
-const user = {
-    name: 'John Doe',
-    birthDate: new Date('1970-01-01'),
-    bestScoreByGame: new Map([
-        ['Minesweeper', 118],
-        ['Donkey Kong', 35500],
-        ['Super Mario Bros.', 183250],
-    ])
-};
-
-const userJsonConverter = new TrueJSON.JsonConverter(TrueJSON.JsonAdapters.object({
-    birthDate: TrueJSON.JsonAdapters.isoDate(),
-    bestScoreByGame: TrueJSON.JsonAdapters.mapAsRecord()
-}));
-
-const userAsJson = userJsonConverter.stringify(user);
-
-console.log(userAsJson);
-```
-
-You can also use ES6 _destructuring assignment_ in order to imitate module imports:
-
-```javascript
-const {JsonConverter, JsonAdapters} = TrueJSON;
+const { JsonConverter, JsonAdapters } = TrueJSON;
 
 const user = {
     name: 'John Doe',
@@ -258,7 +236,7 @@ Let's see an example using [`json5`'s NPM package](https://www.npmjs.com/package
 
 ```javascript
 import json5 from 'json5';
-import {JsonConverter, JsonAdapters} from 'true-json';
+import { JsonConverter, JsonAdapters } from 'true-json';
 
 const user = {
     name: 'John Doe',
@@ -734,8 +712,8 @@ Output:
 SmoothScalingStrategy { }
 ```
 
-If any unknown value&ast; is passed to `adaptToJson()` or `recoverFromJson()` methods, an error is thrown. If you don't want
-this to happen, you can use
+If any unknown value is passed to `adaptToJson()` or `recoverFromJson()` methods, an error is thrown.
+If you want to prevent this, you can use the
 [`byKeyLenient(keyValuePairs\[, fallbackKey\])`](#bykeylenientkeyvaluepairs-fallbackkey) method.
 
 ### byKeyLenient(keyValuePairs\[, fallbackKey])
@@ -851,7 +829,7 @@ const probabilityAdapter = JsonAdapters.identity(input => {
     }
 
     if(input < 0 || input > 1) {
-        throw new Error('input value is out of [0, 1] range');
+        throw new RangeError('input value is out of [0, 1] range');
     }
 
 });
@@ -869,11 +847,11 @@ Output:
 
 ```text
 TypeError: input value is not a finite number
-Error: input value is out of [0, 1] range
+RangeError: input value is out of [0, 1] range
 0.3
 
 TypeError: input value is not a finite number
-Error: input value is out of [0, 1] range
+RangeError: input value is out of [0, 1] range
 0.95
 ```
 
@@ -910,13 +888,13 @@ The number identity adapter simply returns the same value it receives, throwing 
 number (this means that non-finite values like `Infinite`, `-Infinite` or `NaN` are not valid):
 
 ```javascript
-const integerIdentityAdapter = JsonAdapters.numberIdentity();
+const numberIdentityAdapter = JsonAdapters.numberIdentity();
 
-console.log(integerIdentityAdapter.adaptToJson(1234));
-console.log(integerIdentityAdapter.adaptToJson(Infinity));
+console.log(numberIdentityAdapter.adaptToJson(1234));
+console.log(numberIdentityAdapter.adaptToJson(Infinity));
 
-console.log(integerIdentityAdapter.recoverFromJson(-5.7));
-console.log(integerIdentityAdapter.recoverFromJson({an: 'object'}));
+console.log(numberIdentityAdapter.recoverFromJson(-5.7));
+console.log(numberIdentityAdapter.recoverFromJson({an: 'object'}));
 ```
 
 Output:
@@ -981,7 +959,7 @@ TypeError: input value is not a boolean
 
 ### Handling nullish values
 
-Extracted from [MDN](https://developer.mozilla.org/en-US/docs/Glossary/Nullish):
+According to [MDN](https://developer.mozilla.org/en-US/docs/Glossary/Nullish):
 
 > In JavaScript, a nullish value is the value which is either `null` or `undefined`.
 
@@ -1128,7 +1106,7 @@ const dateToArrayAdapter = JsonAdapters.custom({
 
         return [
             date.getFullYear(),
-            date.getMonth(),
+            date.getMonth() + 1,
             date.getDate()
         ];
 
@@ -1153,7 +1131,7 @@ const dateToArrayAdapter = JsonAdapters.custom({
             date
         ] = array;
 
-        return new Date(year, month, date);
+        return new Date(year, month - 1, date);
 
     }
 });
@@ -1173,7 +1151,7 @@ console.log(objectAdapter.adaptToJson({
 
 console.log(objectAdapter.recoverFromJson({
     name: 'John Doe',
-    birthDate: [1970, 0, 1]
+    birthDate: [1970, 1, 1]
 }));
 ```
 
@@ -1182,7 +1160,7 @@ Output:
 ```text
 {
     "name": "John Doe",
-    "birthDate": [1970, 0, 1]
+    "birthDate": [1970, 1, 1]
 }
 
 {
