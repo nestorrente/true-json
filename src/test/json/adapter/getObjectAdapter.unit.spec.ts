@@ -1,6 +1,6 @@
 // tslint:disable:max-classes-per-file
 import getObjectAdapter from '@/json/adapter/getObjectAdapter';
-import {JsonObject} from '@/json/types';
+import {JsonRecord} from '@/json/types';
 
 describe('With default config', () => {
 
@@ -19,7 +19,7 @@ describe('With default config', () => {
 		}
 	}
 
-	interface AdaptedTestObject extends JsonObject {
+	interface AdaptedTestObject extends JsonRecord {
 		date: string;
 		probability: string;
 		text: string;
@@ -44,7 +44,7 @@ describe('With default config', () => {
 		}
 	});
 
-	test(`Adapt plain object to JsonObject`, () => {
+	test(`Adapt plain object to JsonRecord`, () => {
 
 		const input: TestObject = {
 			date: [1970, 1, 1],
@@ -62,7 +62,7 @@ describe('With default config', () => {
 
 	});
 
-	test(`Adapt class instance to JsonObject`, () => {
+	test(`Adapt class instance to JsonRecord`, () => {
 
 		const input: TestObject = new TestObjectClass([1970, 1, 1], 0.42, 'hello world');
 
@@ -76,7 +76,7 @@ describe('With default config', () => {
 
 	});
 
-	test(`Recover plain object from JsonObject`, () => {
+	test(`Recover plain object from JsonRecord`, () => {
 
 		const input: AdaptedTestObject = {
 			date: '1970-01-01',
@@ -115,7 +115,7 @@ describe('With strict plain object check', () => {
 
 	const objectAdapter = getObjectAdapter<TestObject>({}, {strictPlainObjectCheck: true});
 
-	test(`Adapt plain object to JsonObject`, () => {
+	test(`Adapt plain object to JsonRecord`, () => {
 
 		const input: TestObject = {
 			date: [1970, 1, 1],
@@ -127,7 +127,7 @@ describe('With strict plain object check', () => {
 
 	});
 
-	test(`Adapt class instance to JsonObject`, () => {
+	test(`Adapt class instance to JsonRecord`, () => {
 
 		const input: TestObject = new TestObjectClass([1970, 1, 1], 0.42, 'hello world');
 
@@ -144,7 +144,7 @@ describe('Ignoring unmapped properties', () => {
 		text?: string;
 	}
 
-	type SerializableTestObject = TestObject & JsonObject;
+	type SerializableTestObject = TestObject & JsonRecord;
 
 	const objectAdapter = getObjectAdapter<TestObject>({
 		number: {
@@ -159,7 +159,7 @@ describe('Ignoring unmapped properties', () => {
 		omitUnmappedProperties: true
 	});
 
-	test(`Adapt Object to JsonObject`, () => {
+	test(`Adapt Object to JsonRecord`, () => {
 
 		const input: TestObject = {
 			number: 42,
@@ -174,7 +174,7 @@ describe('Ignoring unmapped properties', () => {
 
 	});
 
-	test(`Adapt Object from JsonObject`, () => {
+	test(`Adapt Object from JsonRecord`, () => {
 
 		const input: SerializableTestObject = {
 			number: 1764,
@@ -198,13 +198,13 @@ describe('Ignoring properties explicitly', () => {
 		text?: string;
 	}
 
-	type SerializableTestObject = TestObject & JsonObject;
+	type SerializableTestObject = TestObject & JsonRecord;
 
 	const objectAdapter = getObjectAdapter<TestObject>({}, {
 		omittedProperties: ['text']
 	});
 
-	test(`Adapt Object to JsonObject`, () => {
+	test(`Adapt Object to JsonRecord`, () => {
 
 		const input: TestObject = {
 			number: 42,
@@ -219,7 +219,7 @@ describe('Ignoring properties explicitly', () => {
 
 	});
 
-	test(`Adapt Object from JsonObject`, () => {
+	test(`Adapt Object from JsonRecord`, () => {
 
 		const input: SerializableTestObject = {
 			number: 42,

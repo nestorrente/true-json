@@ -1,5 +1,5 @@
 import getRecordAdapter from '@/json/adapter/getRecordAdapter';
-import {JsonObject} from '@/json/types';
+import {JsonRecord} from '@/json/types';
 import JsonAdapter from '@/json/adapter/JsonAdapter';
 
 class TestRecordClass {
@@ -58,9 +58,9 @@ describe('With default config', () => {
 
 	});
 
-	test(`Recover Record from JsonObject`, () => {
+	test(`Recover Record from JsonRecord`, () => {
 
-		const input: JsonObject<string> = {
+		const input: JsonRecord<string> = {
 			hello: 'WORLD',
 			apple: 'COMPUTER',
 			microsoft: 'WORD'

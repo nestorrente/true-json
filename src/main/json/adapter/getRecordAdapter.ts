@@ -1,4 +1,4 @@
-import {JsonObject, JsonValue} from '@/json/types';
+import {JsonRecord, JsonValue} from '@/json/types';
 import JsonAdapter from '@/json/adapter/JsonAdapter';
 import {assertPlainObject} from '@/json/adapter/assertions';
 
@@ -9,7 +9,7 @@ export interface RecordAdapterConfig {
 export default function getRecordAdapter<T, U extends JsonValue = JsonValue>(
 		valueAdapter: JsonAdapter<T, U>,
 		config?: RecordAdapterConfig
-): JsonAdapter<Record<string, T>, JsonObject<U>> {
+): JsonAdapter<Record<string, T>, JsonRecord<U>> {
 
 	const fullConfig = completeConfigWithDefaultValues(config);
 

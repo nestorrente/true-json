@@ -1,4 +1,4 @@
-import {JsonObject, JsonValue} from '@/json/types';
+import {JsonRecord, JsonValue} from '@/json/types';
 import JsonAdapter from '@/json/adapter/JsonAdapter';
 import {StringKeyOf} from '@/json/adapter/types';
 import {hasOwnProperty} from '@/json/adapter/utils';
@@ -22,7 +22,7 @@ export interface ObjectAdapterConfig<T extends object = object> {
 export default function getObjectAdapter<T extends object>(
 		propertyAdapters: PropertyAdapters<T>,
 		config?: Partial<ObjectAdapterConfig<T>>
-): JsonAdapter<T, JsonObject> {
+): JsonAdapter<T, JsonRecord> {
 
 	const fullConfig = completeConfigWithDefaultValues(config);
 
